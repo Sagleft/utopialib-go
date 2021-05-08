@@ -14,13 +14,7 @@ Install
 -----
 
 ```bash
-go get gopkg.in/sagleft/utopialib-go.v2
-```
-
-or
-
-```go
-import "gopkg.in/sagleft/utopialib-go.v2"
+go get github.com/Sagleft/utopialib-go
 ```
 
 Usage
