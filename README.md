@@ -17,15 +17,23 @@ Install
 go get github.com/Sagleft/utopialib-go
 ```
 
+then
+
+```go
+import (
+	utopiago "github.com/Sagleft/utopialib-go"
+)
+```
+
 Usage
 -----
 
 ```go
 client := utopiago.UtopiaClient{
-	protocol: "http",
-	token:    "C17BF2E95821A6B545DC9A193CBB750B",
-	host:     "127.0.0.1",
-	port:     22791,
+	Protocol: "http",
+	Token:    "C17BF2E95821A6B545DC9A193CBB750B",
+	Host:     "127.0.0.1",
+	Port:     22791,
 }
 
 fmt.Println(client.GetSystemInfo())
