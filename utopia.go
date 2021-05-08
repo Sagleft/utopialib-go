@@ -219,7 +219,7 @@ func (c *UtopiaClient) CreateVoucher(amount float64) (string, error) {
 
 //SetWebSocketState - set WSS Notification state
 func (c *UtopiaClient) SetWebSocketState(enabled bool, port int) error {
-	var enabledStr string = "0"
+	var enabledStr string
 	if enabled {
 		enabledStr = "1"
 	}
