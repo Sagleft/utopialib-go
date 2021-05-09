@@ -28,16 +28,19 @@ type UtopiaClient struct {
 //UtopiaClientInterface contains an enumeration of methods
 type UtopiaClientInterface interface {
 	apiQuery(methodName string) map[string]interface{}
-
+	// profile
 	GetProfileStatus() map[string]interface{}
 	GetSystemInfo() map[string]interface{}
 	GetOwnContact() map[string]interface{}
-
+	// crypton
 	GetBalance() (float64, error)
 	UseVoucher(voucherCode string) error
 	GetFinanceHistory() map[string]interface{}
 	CheckClientConnection() bool
 	CreateVoucher(amount float64) error
+	// channels
+	SendChannelMessage(channelID, message string) (string, error)
+	SendChannelPicture(channelID, base64Image, comment, filenameForImage string) (string, error)
 }
 
 func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}) (map[string]interface{}, error) {
@@ -250,4 +253,24 @@ func (c *UtopiaClient) GetWebSocketState() (int64, error) {
 func (c *UtopiaClient) ServeWs() error {
 	//TODO
 	return nil
+}
+
+// SendChannelMessage - send channel message & get message ID
+func (c *UtopiaClient) SendChannelMessage(channelID, message string) (string, error) {
+	params := map[string]interface{}{
+		"channelid": channelID,
+		"message":   message,
+	}
+	return c.queryResultToString("sendChannelMessage", params)
+}
+
+// SendChannelPicture - send channel picture & get message ID
+func (c *UtopiaClient) SendChannelPicture(channelID, base64Image, comment, filenameForImage string) (string, error) {
+	params := map[string]interface{}{
+		"channelid":      channelID,
+		"base64_image":   base64Image,
+		"comment":        comment,
+		"filename_image": filenameForImage,
+	}
+	return c.queryResultToString("sendChannelPicture", params)
 }
