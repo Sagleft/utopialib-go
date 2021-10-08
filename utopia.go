@@ -208,6 +208,18 @@ func (c *UtopiaClient) GetBalance() (float64, error) {
 	return result, nil
 }
 
+// GetUUSDBalance request account UUSD balance
+func (c *UtopiaClient) GetUUSDBalance() (float64, error) {
+	params := map[string]interface{}{
+		"currency": "USD",
+	}
+	result, err := c.queryResultToFloat64("getBalance", params)
+	if err != nil {
+		return 0, err
+	}
+	return result, nil
+}
+
 // CreateVoucher requests the creation of a new voucher. it returns referenceNumber
 func (c *UtopiaClient) CreateVoucher(amount float64) (string, error) {
 	params := map[string]interface{}{
