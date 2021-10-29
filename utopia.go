@@ -220,10 +220,10 @@ func (c *UtopiaClient) GetUUSDBalance() (float64, error) {
 	return result, nil
 }
 
-// CreateVoucher requests the creation of a new voucher. it returns referenceNumber
-func (c *UtopiaClient) CreateVoucher(amount float64) (string, error) {
+func (c *UtopiaClient) createCoinVoucher(amount float64, coin string) (string, error) {
 	params := map[string]interface{}{
-		"amount": amount,
+		"amount":   amount,
+		"currency": coin,
 	}
 	result, err := c.queryResultToString("createVoucher", params)
 	if err != nil {
@@ -233,6 +233,16 @@ func (c *UtopiaClient) CreateVoucher(amount float64) (string, error) {
 		return "", errors.New("failed to create voucher, empty string in client response")
 	}
 	return result, nil
+}
+
+// CreateVoucher requests the creation of a new Crypton voucher. it returns referenceNumber
+func (c *UtopiaClient) CreateVoucher(amount float64) (string, error) {
+	return c.createCoinVoucher(amount, "CRP")
+}
+
+// CreateUUSDVoucher requests the creation of a new UUSD voucher. it returns referenceNumber
+func (c *UtopiaClient) CreateUUSDVoucher(amount float64) (string, error) {
+	return c.createCoinVoucher(amount, "UUSD")
 }
 
 // SetWebSocketState - set WSS Notification state
