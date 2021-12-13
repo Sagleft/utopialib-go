@@ -201,7 +201,7 @@ func (c *UtopiaClient) GetFinanceHistory(filters string, referenceNumber string)
 
 // GetBalance request account Crypton balance
 func (c *UtopiaClient) GetBalance() (float64, error) {
-	result, err := c.queryResultToFloat64("getBalance", nil)
+	result, err := c.queryResultToFloat64("getBalance", map[string]interface{}{})
 	if err != nil {
 		return 0, err
 	}
