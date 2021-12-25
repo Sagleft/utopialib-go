@@ -116,6 +116,22 @@ func (c *UtopiaClient) queryResultToInterfaceArray(methodName string, params map
 	return nil, errors.New("accaptable result doesn't exists in client response")
 }
 
+func (c *UtopiaClient) queryResultToStringsArray(methodName string, params map[string]interface{}) ([]string, error) {
+	if !c.CheckClientConnection() {
+		return nil, errors.New("client disconected")
+	}
+	response, err := c.apiQuery(methodName, params)
+	if result, ok := response["result"]; ok {
+		//check type assertion
+		IResult, isConvertable := result.([]string)
+		if !isConvertable {
+			return nil, errors.New("failed to get result array")
+		}
+		return IResult, err
+	}
+	return nil, errors.New("accaptable result doesn't exists in client response")
+}
+
 func (c *UtopiaClient) queryResultToString(methodName string, params map[string]interface{}) (string, error) {
 	if !c.CheckClientConnection() {
 		return "", errors.New("client disconected")
@@ -292,4 +308,12 @@ func (c *UtopiaClient) SendChannelPicture(channelID, base64Image, comment, filen
 		"filename_image": filenameForImage,
 	}
 	return c.queryResultToString("sendChannelPicture", params)
+}
+
+// GetStickerNamesByCollection returns available names from corresponded collection
+func (c *UtopiaClient) GetStickerNamesByCollection(collectionName string) ([]string, error) {
+	params := map[string]interface{}{
+		"collection_name": collectionName,
+	}
+	return c.queryResultToStringsArray("getStickerNamesByCollection", params)
 }
