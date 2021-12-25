@@ -194,3 +194,13 @@ func (c *UtopiaClient) GetStickerNamesByCollection(collectionName string) ([]str
 	}
 	return c.queryResultToStringsArray("getStickerNamesByCollection", params)
 }
+
+// GetStickerImage returns sticker image in base64
+func (c *UtopiaClient) GetStickerImage(collectionName, stickerName string) (string, error) {
+	params := map[string]interface{}{
+		"collection_name": collectionName,
+		"sticker_name":    stickerName,
+		"coder":           "BASE64",
+	}
+	return c.queryResultToString("getImageSticker", params)
+}
