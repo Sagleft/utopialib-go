@@ -29,16 +29,22 @@ func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}
 	}
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return responseMap, err
+	}
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
+	defer closeRequest(resp)
 	if err != nil {
 		return responseMap, err
 	}
-	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return responseMap, errors.New("failed to read response body: " + err.Error())
+	}
 
 	if !json.Valid(body) {
 		return responseMap, errors.New("failed to validate json from client")
@@ -46,6 +52,12 @@ func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}
 
 	json.Unmarshal(body, &responseMap)
 	return responseMap, nil
+}
+
+func closeRequest(resp *http.Response) {
+	if resp != nil {
+		resp.Body.Close()
+	}
 }
 
 func (c *UtopiaClient) queryResultToInterface(methodName string, params map[string]interface{}) (interface{}, error) {
