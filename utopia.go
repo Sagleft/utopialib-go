@@ -204,3 +204,15 @@ func (c *UtopiaClient) GetStickerImage(collectionName, stickerName string) (stri
 	}
 	return c.queryResultToString("getImageSticker", params)
 }
+
+// UCodeEncode - encode data to uCode image.
+// coder: BASE64 for example
+// format: JPG or PNG
+func (c *UtopiaClient) UCodeEncode(dataHexCode, coder, format string, imageSize int) (string, error) {
+	return c.queryResultToString("ucodeEncode", map[string]interface{}{
+		"hex_code":   dataHexCode,
+		"size_image": imageSize,
+		"coder":      "BASE64",
+		"format":     format,
+	})
+}
