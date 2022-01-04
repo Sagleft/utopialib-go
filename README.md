@@ -47,3 +47,9 @@ How can this be used?
 * development of a bot for the channel;
 * utility for working with uNS;
 * experiments to explore web3.0;
+
+---
+
+![image](https://github.com/Sagleft/Sagleft/raw/master/image.png)
+
+### :globe_with_meridians: [Telegram канал](https://t.me/+VIvd8j6xvm9iMzhi)
