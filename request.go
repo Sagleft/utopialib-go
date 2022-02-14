@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -95,7 +94,6 @@ func (c *UtopiaClient) queryResultToStringsArray(methodName string, params map[s
 	}
 	response, err := c.apiQuery(methodName, params)
 	if result, ok := response["result"]; ok {
-		log.Println(result)
 		//check type assertion
 		IResult, isConvertable := result.([]string)
 		if !isConvertable {
