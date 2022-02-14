@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"strconv"
 
 	"gopkg.in/grignaak/tribool.v1"
@@ -96,7 +97,8 @@ func (c *UtopiaClient) queryResultToStringsArray(methodName string, params map[s
 		//check type assertion
 		IResult, isConvertable := result.([]string)
 		if !isConvertable {
-			return nil, errors.New("failed to get result array")
+			return nil, errors.New("failed to get result array. []string expected, " +
+				reflect.TypeOf(result).String() + "given")
 		}
 		return IResult, err
 	}
