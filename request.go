@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -94,11 +95,27 @@ func (c *UtopiaClient) queryResultToStringsArray(methodName string, params map[s
 	}
 	response, err := c.apiQuery(methodName, params)
 	if result, ok := response["result"]; ok {
+		log.Println(result)
 		//check type assertion
 		IResult, isConvertable := result.([]string)
 		if !isConvertable {
-			return nil, errors.New("failed to get result array. []string expected, " +
-				reflect.TypeOf(result).String() + "given")
+			resultType := reflect.TypeOf(result).String()
+			if resultType == "[]interface {}" {
+				IResult, isConvertable := result.([]interface{})
+				if !isConvertable {
+					return nil, errors.New("failed to get result array. can't convert to strings array")
+				}
+				resultArray := []string{}
+				for _, elementRaw := range IResult {
+					element, isConvertable := elementRaw.(string)
+					if !isConvertable {
+						return nil, errors.New("failed to convert result array element to string")
+					}
+					resultArray = append(resultArray, element)
+				}
+				return resultArray, nil
+			}
+			return nil, errors.New("failed to get result array. []string expected, " + resultType + "given")
 		}
 		return IResult, err
 	}
