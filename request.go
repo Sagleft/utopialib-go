@@ -125,6 +125,9 @@ func (c *UtopiaClient) queryResultToString(methodName string, params map[string]
 		return "", errors.New("client disconected")
 	}
 	response, err := c.apiQuery(methodName, params)
+	if err != nil {
+		return "", errors.New("failed to send API request: " + err.Error())
+	}
 	if result, ok := response["result"]; ok {
 		resultstr := fmt.Sprintf("%v", result)
 		return resultstr, err
