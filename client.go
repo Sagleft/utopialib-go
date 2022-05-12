@@ -4,37 +4,6 @@ import (
 	"errors"
 )
 
-// Query is a filter for API requests
-type Query struct {
-	Method string                 `json:"method"`
-	Token  string                 `json:"token"`
-	Params map[string]interface{} `json:"params"`
-}
-
-// UtopiaClient lets you connect to Utopia Client
-type UtopiaClient struct {
-	Protocol, Host, Token string
-	Port                  int
-}
-
-// UtopiaClientInterface contains an enumeration of methods
-type UtopiaClientInterface interface {
-	apiQuery(methodName string) map[string]interface{}
-	// profile
-	GetProfileStatus() map[string]interface{}
-	GetSystemInfo() map[string]interface{}
-	GetOwnContact() map[string]interface{}
-	// crypton
-	GetBalance() (float64, error)
-	UseVoucher(voucherCode string) error
-	GetFinanceHistory() map[string]interface{}
-	CheckClientConnection() bool
-	CreateVoucher(amount float64) error
-	// channels
-	SendChannelMessage(channelID, message string) (string, error)
-	SendChannelPicture(channelID, base64Image, comment, filenameForImage string) (string, error)
-}
-
 // GetProfileStatus gets data about the status of the current account
 func (c *UtopiaClient) GetProfileStatus() (map[string]interface{}, error) {
 	return c.apiQuery("getProfileStatus", nil)
