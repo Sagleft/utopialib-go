@@ -15,3 +15,9 @@ type UtopiaClient struct {
 	Port     int    `json:"port"`
 	WsPort   int    `json:"wsport"`
 }
+
+// WsEvent - websocket event from Utopia Client
+type WsEvent struct {
+	Type string                 `json:"type"`
+	Data map[string]interface{} `json:"data"`
+}
