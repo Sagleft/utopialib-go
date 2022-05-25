@@ -2,6 +2,7 @@ package utopiago
 
 import (
 	"errors"
+	"strconv"
 )
 
 // GetProfileStatus gets data about the status of the current account
@@ -104,16 +105,26 @@ func (c *UtopiaClient) CreateUUSDVoucher(amount float64) (string, error) {
 	return c.createCoinVoucher(amount, "UUSD")
 }
 
+type SetWsStateTask struct {
+	Enabled       bool   `json:"enabled"`
+	Port          int    `json:"port"`
+	EnableSSL     bool   `json:"enablessl"`
+	Notifications string `json:"notifications"` // example: "contact, wallet" example2: "all"
+}
+
 // SetWebSocketState - set WSS Notification state
-func (c *UtopiaClient) SetWebSocketState(enabled bool, port int) error {
-	var enabledStr string
-	if enabled {
-		enabledStr = "1"
-	}
+func (c *UtopiaClient) SetWebSocketState(task SetWsStateTask) error {
 	params := map[string]interface{}{
-		"enabled": enabledStr,
-		"port":    port,
+		"enabled": strconv.FormatBool(task.Enabled),
+		"port":    strconv.Itoa(task.Port),
 	}
+	if task.EnableSSL {
+		params["enablessl"] = strconv.FormatBool(task.EnableSSL)
+	}
+	if task.Notifications != "" {
+		params["notifications"] = task.Notifications
+	}
+
 	result, err := c.queryResultToString("setWebSocketState", params)
 	if err != nil {
 		return err
