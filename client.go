@@ -24,7 +24,7 @@ func (c *UtopiaClient) SetProfileStatus(status string, mood string) error {
 	if err != nil {
 		return err
 	}
-	if result == false {
+	if !result {
 		return errors.New("failed to set profile status")
 	}
 	return nil
@@ -38,10 +38,7 @@ func (c *UtopiaClient) GetOwnContact() (map[string]interface{}, error) {
 // CheckClientConnection - checks if there are any errors when contacting the client
 func (c *UtopiaClient) CheckClientConnection() bool {
 	_, err := c.GetSystemInfo()
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 // UseVoucher - uses the voucher and returns an error on failure

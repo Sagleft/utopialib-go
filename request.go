@@ -61,17 +61,6 @@ func closeRequest(resp *http.Response) {
 	}
 }
 
-func (c *UtopiaClient) queryResultToInterface(methodName string, params map[string]interface{}) (interface{}, error) {
-	if !c.CheckClientConnection() {
-		return nil, errors.New("client disconected")
-	}
-	response, err := c.apiQuery(methodName, params)
-	if result, ok := response["result"]; ok {
-		return result, err
-	}
-	return nil, errors.New("result field doesn't exists in client response")
-}
-
 func (c *UtopiaClient) queryResultToInterfaceArray(methodName string, params map[string]interface{}) ([]interface{}, error) {
 	if !c.CheckClientConnection() {
 		return nil, errors.New("client disconected")
