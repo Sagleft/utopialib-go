@@ -13,4 +13,5 @@ type UtopiaClient struct {
 	Host     string `json:"host"`
 	Token    string `json:"token"`
 	Port     int    `json:"port"`
+	WsPort   int    `json:"wsport"`
 }
