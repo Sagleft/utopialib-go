@@ -13,9 +13,18 @@ import (
 	"gopkg.in/grignaak/tribool.v1"
 )
 
+// get API url
+func (c *UtopiaClient) getBaseURL() string {
+	return c.Protocol + "://" + c.getBaseURLWithoutProtocol()
+}
+
+// get API url
+func (c *UtopiaClient) getBaseURLWithoutProtocol() string {
+	return c.Host + ":" + strconv.Itoa(c.Port) + "/api/1.0/"
+}
+
 func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}) (map[string]interface{}, error) {
 	var responseMap map[string]interface{}
-	url := c.Protocol + "://" + c.Host + ":" + strconv.Itoa(c.Port) + "/api/1.0/"
 	var query = Query{
 		Method: methodName,
 		Token:  c.Token,
@@ -29,7 +38,7 @@ func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}
 		return responseMap, errors.New("failed to dedcode response json: " + err.Error())
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest("POST", c.getBaseURL(), bytes.NewBuffer(jsonStr))
 	if err != nil {
 		return responseMap, err
 	}
