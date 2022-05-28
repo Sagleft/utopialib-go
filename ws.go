@@ -3,11 +3,9 @@ package utopiago
 import (
 	"encoding/json"
 	"errors"
-	"os"
-	"os/signal"
 	"reflect"
 
-	"github.com/sacOO7/gowebsocket"
+	"github.com/rgamba/evtwebsocket"
 )
 
 // GetString - get string field from ws event.
@@ -90,18 +88,9 @@ func (ws *WsEvent) GetFloat(field string) (float64, error) {
 	return val, nil
 }
 
-type WsEventsCallback func(ws WsEvent)
-
-type WsErrorCallback func(err error)
-
-type WsSubscribeTask struct {
-	Callback    WsEventsCallback // required
-	ErrCallback WsErrorCallback  // required
-}
-
-func newWsEvent(jsonRaw string) (WsEvent, error) {
+func newWsEvent(jsonRaw []byte) (WsEvent, error) {
 	event := WsEvent{}
-	err := json.Unmarshal([]byte(jsonRaw), &event)
+	err := json.Unmarshal(jsonRaw, &event)
 	if err != nil {
 		return event, errors.New("failed to decode event json: " + err.Error())
 	}
@@ -111,31 +100,31 @@ func newWsEvent(jsonRaw string) (WsEvent, error) {
 // WsSubscribe - connect to websocket & recive messages.
 // NOTE: it's blocking method
 func (c *UtopiaClient) WsSubscribe(task WsSubscribeTask) error {
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
-
-	// create ws
-	socket := gowebsocket.New("ws://" + c.getBaseURLWithoutProtocol())
-
-	// setup callbacks
-	socket.OnTextMessage = func(message string, socket gowebsocket.Socket) {
-		event, err := newWsEvent(message)
-		if err != nil {
+	conn := evtwebsocket.Conn{
+		// Fires when the connection is established
+		OnConnected: func(w *evtwebsocket.Conn) {
+			task.OnConnected()
+		},
+		// Fires when a new message arrives from the server
+		OnMessage: func(msg []byte, w *evtwebsocket.Conn) {
+			event, err := newWsEvent(msg)
+			if err != nil {
+				task.ErrCallback(err)
+			} else {
+				task.Callback(event)
+			}
+		},
+		// Fires when an error occurs and connection is closed
+		OnError: func(err error) {
 			task.ErrCallback(err)
-		} else {
-			task.Callback(event)
-		}
+		},
 	}
 
-	socket.OnDisconnected = func(err error, socket gowebsocket.Socket) {
-		task.ErrCallback(err)
+	if !task.DisablePing {
+		conn.PingIntervalSecs = 5     // ping interval in seconds
+		conn.PingMsg = []byte("PING") // ping message to send
 	}
 
-	// connect
-	socket.Connect()
-
-	// wait for close
-	<-interrupt
-	socket.Close()
-	return nil
+	// open connection
+	return conn.Dial(c.getWsURL(), "")
 }
