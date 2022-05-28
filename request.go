@@ -135,7 +135,17 @@ func (c *UtopiaClient) queryResultToString(methodName string, params map[string]
 		resultstr := fmt.Sprintf("%v", result)
 		return resultstr, err
 	}
-	return "", errors.New("result field doesn't exists in client response")
+
+	errorInfoRaw, isErrorFound := response["error"]
+	if isErrorFound {
+		errorInfo, isConvertable := errorInfoRaw.(string)
+		if !isConvertable {
+			return "", errors.New("failed to parse error (type `" + reflect.ValueOf(errorInfoRaw).String() + "`) from result")
+		}
+		return "", errors.New(errorInfo)
+	}
+
+	return "", errors.New("result & error fields doesn't exists in client response")
 }
 
 func (c *UtopiaClient) queryResultToBool(methodName string, params map[string]interface{}) (bool, error) {
