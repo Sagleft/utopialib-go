@@ -186,3 +186,30 @@ func (c *UtopiaClient) UCodeEncode(dataHexCode, coder, format string, imageSize 
 		"format":     format,
 	})
 }
+
+// SendAuthRequest - send auth request to user
+func (c *UtopiaClient) SendAuthRequest(pubkey, message string) (bool, error) {
+	params := map[string]interface{}{
+		"pk":      pubkey,
+		"message": message,
+	}
+	return c.queryResultToBool("sendAuthorizationRequest", params)
+}
+
+// AcceptAuthRequest - accept auth request
+func (c *UtopiaClient) AcceptAuthRequest(pubkey, message string) (bool, error) {
+	params := map[string]interface{}{
+		"pk":      pubkey,
+		"message": message,
+	}
+	return c.queryResultToBool("acceptAuthorizationRequest", params)
+}
+
+// RejectAuthRequest - reject user auth request
+func (c *UtopiaClient) RejectAuthRequest(pubkey, message string) (bool, error) {
+	params := map[string]interface{}{
+		"pk":      pubkey,
+		"message": message,
+	}
+	return c.queryResultToBool("rejectAuthorizationRequest", params)
+}
