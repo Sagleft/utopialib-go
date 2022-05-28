@@ -1,12 +1,9 @@
 package utopiago
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
-	"log"
-	"os"
 	"reflect"
-	"strconv"
 
 	"github.com/rgamba/evtwebsocket"
 )
@@ -96,51 +93,24 @@ type WsEventsCallback func(ws WsEvent)
 type WsErrorCallback func(err error)
 
 type WsSubscribeTask struct {
-	Port        int
+	// required
+	OnConnected func()           // required
 	Callback    WsEventsCallback // required
 	ErrCallback WsErrorCallback  // required
+	Port        int
+
+	// optional
+	DisablePing bool
 }
 
-/*func newWsEvent(jsonRaw string) (WsEvent, error) {
+func newWsEvent(jsonRaw []byte) (WsEvent, error) {
 	event := WsEvent{}
-	err := json.Unmarshal([]byte(jsonRaw), &event)
+	err := json.Unmarshal(jsonRaw, &event)
 	if err != nil {
 		return event, errors.New("failed to decode event json: " + err.Error())
 	}
 	return event, nil
-}*/
-
-// WsSubscribe - connect to websocket & recive messages.
-// NOTE: it's blocking method
-/*func (c *UtopiaClient) WsSubscribe(task WsSubscribeTask) error {
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
-
-	// create ws
-	socket := gowebsocket.New("ws://" + c.getBaseURLWithoutProtocol())
-
-	// setup callbacks
-	socket.OnTextMessage = func(message string, socket gowebsocket.Socket) {
-		event, err := newWsEvent(message)
-		if err != nil {
-			task.ErrCallback(err)
-		} else {
-			task.Callback(event)
-		}
-	}
-
-	socket.OnDisconnected = func(err error, socket gowebsocket.Socket) {
-		task.ErrCallback(err)
-	}
-
-	// connect
-	socket.Connect()
-
-	// wait for close
-	<-interrupt
-	socket.Close()
-	return nil
-}*/
+}
 
 // WsSubscribe - connect to websocket & recive messages.
 // NOTE: it's blocking method
@@ -148,27 +118,28 @@ func (c *UtopiaClient) WsSubscribe(task WsSubscribeTask) error {
 	conn := evtwebsocket.Conn{
 		// Fires when the connection is established
 		OnConnected: func(w *evtwebsocket.Conn) {
-			fmt.Println("Connected!")
+			task.OnConnected()
 		},
 		// Fires when a new message arrives from the server
 		OnMessage: func(msg []byte, w *evtwebsocket.Conn) {
-			fmt.Printf("New message: %s\n", msg)
+			event, err := newWsEvent(msg)
+			if err != nil {
+				task.ErrCallback(err)
+			} else {
+				task.Callback(event)
+			}
 		},
 		// Fires when an error occurs and connection is closed
 		OnError: func(err error) {
-			fmt.Printf("Error: %s\n", err.Error())
-			os.Exit(1)
+			task.ErrCallback(err)
 		},
-		// Ping interval in secs (optional)
-		PingIntervalSecs: 5,
-		// Ping message to send (optional)
-		PingMsg: []byte("PING"),
 	}
 
-	err := conn.Dial(c.getBaseURL()+":"+strconv.Itoa(task.Port), "")
-	if err != nil {
-		log.Fatal(err)
+	if !task.DisablePing {
+		conn.PingIntervalSecs = 5     // ping interval in seconds
+		conn.PingMsg = []byte("PING") // ping message to send
 	}
 
-	return nil
+	// open connection
+	return conn.Dial(c.getWsURL(), "")
 }

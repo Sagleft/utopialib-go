@@ -23,6 +23,11 @@ func (c *UtopiaClient) getBaseURLWithoutProtocol() string {
 	return c.Host + ":" + strconv.Itoa(c.Port) + "/api/1.0/"
 }
 
+// get ws API url
+func (c *UtopiaClient) getWsURL() string {
+	return "ws://" + c.Host + ":" + strconv.Itoa(c.WsPort) + "/UtopiaWSS?token=" + c.Token
+}
+
 func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}) (map[string]interface{}, error) {
 	var responseMap map[string]interface{}
 	var query = Query{
