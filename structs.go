@@ -21,3 +21,10 @@ type WsEvent struct {
 	Type string                 `json:"type"`
 	Data map[string]interface{} `json:"data"`
 }
+
+type SetWsStateTask struct {
+	Enabled       bool   `json:"enabled"`
+	Port          int    `json:"port"`
+	EnableSSL     bool   `json:"enablessl"`
+	Notifications string `json:"notifications"` // example: "contact, wallet" example2: "all"
+}

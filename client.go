@@ -105,13 +105,6 @@ func (c *UtopiaClient) CreateUUSDVoucher(amount float64) (string, error) {
 	return c.createCoinVoucher(amount, "UUSD")
 }
 
-type SetWsStateTask struct {
-	Enabled       bool   `json:"enabled"`
-	Port          int    `json:"port"`
-	EnableSSL     bool   `json:"enablessl"`
-	Notifications string `json:"notifications"` // example: "contact, wallet" example2: "all"
-}
-
 // SetWebSocketState - set WSS Notification state
 func (c *UtopiaClient) SetWebSocketState(task SetWsStateTask) error {
 	params := map[string]interface{}{

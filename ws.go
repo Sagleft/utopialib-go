@@ -3,11 +3,12 @@ package utopiago
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"log"
 	"os"
-	"os/signal"
 	"reflect"
 
-	"github.com/sacOO7/gowebsocket"
+	"github.com/rgamba/evtwebsocket"
 )
 
 // GetString - get string field from ws event.
@@ -110,7 +111,7 @@ func newWsEvent(jsonRaw string) (WsEvent, error) {
 
 // WsSubscribe - connect to websocket & recive messages.
 // NOTE: it's blocking method
-func (c *UtopiaClient) WsSubscribe(task WsSubscribeTask) error {
+/*func (c *UtopiaClient) WsSubscribe(task WsSubscribeTask) error {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
@@ -137,5 +138,36 @@ func (c *UtopiaClient) WsSubscribe(task WsSubscribeTask) error {
 	// wait for close
 	<-interrupt
 	socket.Close()
+	return nil
+}*/
+
+// WsSubscribe - connect to websocket & recive messages.
+// NOTE: it's blocking method
+func (c *UtopiaClient) WsSubscribe(task WsSubscribeTask) error {
+	conn := evtwebsocket.Conn{
+		// Fires when the connection is established
+		OnConnected: func(w *evtwebsocket.Conn) {
+			fmt.Println("Connected!")
+		},
+		// Fires when a new message arrives from the server
+		OnMessage: func(msg []byte, w *evtwebsocket.Conn) {
+			fmt.Printf("New message: %s\n", msg)
+		},
+		// Fires when an error occurs and connection is closed
+		OnError: func(err error) {
+			fmt.Printf("Error: %s\n", err.Error())
+			os.Exit(1)
+		},
+		// Ping interval in secs (optional)
+		PingIntervalSecs: 5,
+		// Ping message to send (optional)
+		PingMsg: []byte("PING"),
+	}
+
+	err := conn.Dial(c.getBaseURL(), "")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return nil
 }
