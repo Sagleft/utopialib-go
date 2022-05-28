@@ -186,3 +186,12 @@ func (c *UtopiaClient) UCodeEncode(dataHexCode, coder, format string, imageSize 
 		"format":     format,
 	})
 }
+
+// AcceptAuthRequest - accept auth request
+func (c *UtopiaClient) AcceptAuthRequest(pubkey, message string) (bool, error) {
+	params := map[string]interface{}{
+		"pk":      pubkey,
+		"message": message,
+	}
+	return c.queryResultToBool("acceptAuthorizationRequest", params)
+}
