@@ -28,3 +28,18 @@ type SetWsStateTask struct {
 	EnableSSL     bool   `json:"enablessl"`
 	Notifications string `json:"notifications"` // example: "contact, wallet" example2: "all"
 }
+
+type WsEventsCallback func(ws WsEvent)
+
+type WsErrorCallback func(err error)
+
+type WsSubscribeTask struct {
+	// required
+	OnConnected func()           // required
+	Callback    WsEventsCallback // required
+	ErrCallback WsErrorCallback  // required
+	Port        int
+
+	// optional
+	DisablePing bool
+}

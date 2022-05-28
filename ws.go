@@ -88,21 +88,6 @@ func (ws *WsEvent) GetFloat(field string) (float64, error) {
 	return val, nil
 }
 
-type WsEventsCallback func(ws WsEvent)
-
-type WsErrorCallback func(err error)
-
-type WsSubscribeTask struct {
-	// required
-	OnConnected func()           // required
-	Callback    WsEventsCallback // required
-	ErrCallback WsErrorCallback  // required
-	Port        int
-
-	// optional
-	DisablePing bool
-}
-
 func newWsEvent(jsonRaw []byte) (WsEvent, error) {
 	event := WsEvent{}
 	err := json.Unmarshal(jsonRaw, &event)
