@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"strconv"
 
 	"github.com/rgamba/evtwebsocket"
 )
@@ -164,7 +165,7 @@ func (c *UtopiaClient) WsSubscribe(task WsSubscribeTask) error {
 		PingMsg: []byte("PING"),
 	}
 
-	err := conn.Dial(c.getBaseURL(), "")
+	err := conn.Dial(c.getBaseURL()+":"+strconv.Itoa(task.Port), "")
 	if err != nil {
 		log.Fatal(err)
 	}
