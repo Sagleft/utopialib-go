@@ -213,3 +213,13 @@ func (c *UtopiaClient) RejectAuthRequest(pubkey, message string) (bool, error) {
 	}
 	return c.queryResultToBool("rejectAuthorizationRequest", params)
 }
+
+// SendInstantMessage - send message to contact (PM).
+// to -- pubkey or uNS entry name
+func (c *UtopiaClient) SendInstantMessage(to string, message string) (int64, error) {
+	params := map[string]interface{}{
+		"to":   to,
+		"text": message,
+	}
+	return c.queryResultToInt("sendInstantMessage", params)
+}
