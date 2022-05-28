@@ -1,7 +1,6 @@
 package utopiago
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -96,18 +95,19 @@ type WsEventsCallback func(ws WsEvent)
 type WsErrorCallback func(err error)
 
 type WsSubscribeTask struct {
+	Port        int
 	Callback    WsEventsCallback // required
 	ErrCallback WsErrorCallback  // required
 }
 
-func newWsEvent(jsonRaw string) (WsEvent, error) {
+/*func newWsEvent(jsonRaw string) (WsEvent, error) {
 	event := WsEvent{}
 	err := json.Unmarshal([]byte(jsonRaw), &event)
 	if err != nil {
 		return event, errors.New("failed to decode event json: " + err.Error())
 	}
 	return event, nil
-}
+}*/
 
 // WsSubscribe - connect to websocket & recive messages.
 // NOTE: it's blocking method
