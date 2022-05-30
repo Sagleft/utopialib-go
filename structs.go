@@ -43,3 +43,15 @@ type WsSubscribeTask struct {
 	// optional
 	DisablePing bool
 }
+
+// ContactData - user contact data
+type ContactData struct {
+	AuthStatus int    `json:"authorizationStatus"`
+	AvatarHash string `json:"avatarMd5"`
+	Group      string `json:"group"`
+	PubkeyHash string `json:"hashedPk"`
+	IsFriend   bool   `json:"isFriend"`
+	Nick       string `json:"nick"`
+	Pubkey     string `json:"pk"`
+	Status     int    `json:"status"` // 65536 - offline, 4096 - online, 4097 - away, 4099 - do not disturb, 32768 - invisible
+}
