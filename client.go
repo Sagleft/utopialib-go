@@ -1,8 +1,8 @@
 package utopiago
 
 import (
+	"encoding/json"
 	"errors"
-	"reflect"
 	"strconv"
 )
 
@@ -256,20 +256,15 @@ func (c *UtopiaClient) GetContacts(filter string) ([]ContactData, error) {
 	}
 
 	// convert result
-	contactsRaw, isConvertable := result.([]interface{})
-	if !isConvertable {
-		return nil, errors.New("failed to convert result (type " + reflect.ValueOf(result).String() +
-			") to empty interface array")
+	jsonBytes, err := json.Marshal(result)
+	if err != nil {
+		return nil, errors.New("failed to encode response result: " + err.Error())
+	}
+	contacts := []ContactData{}
+	err = json.Unmarshal(jsonBytes, &contacts)
+	if err != nil {
+		return nil, errors.New("failed to decode reconverted result: " + err.Error())
 	}
 
-	contacts := []ContactData{}
-	for _, contactDataRaw := range contactsRaw {
-		contactData, isConvertable := contactDataRaw.(ContactData)
-		if !isConvertable {
-			return nil, errors.New("failed to convert contact data raw (type " + reflect.ValueOf(contactDataRaw).String() +
-				") to contact data")
-		}
-		contacts = append(contacts, contactData)
-	}
 	return contacts, nil
 }
