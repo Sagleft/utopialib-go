@@ -256,9 +256,20 @@ func (c *UtopiaClient) GetContacts(filter string) ([]ContactData, error) {
 	}
 
 	// convert result
-	contactsData, isConvertable := result.([]ContactData)
+	contactsRaw, isConvertable := result.([]interface{})
 	if !isConvertable {
-		return nil, errors.New("failed to convert result (type " + reflect.ValueOf(result).String() + ") to contacts data")
+		return nil, errors.New("failed to convert result (type " + reflect.ValueOf(result).String() +
+			") to empty interface array")
 	}
-	return contactsData, nil
+
+	contacts := []ContactData{}
+	for _, contactDataRaw := range contactsRaw {
+		contactData, isConvertable := contactDataRaw.(ContactData)
+		if !isConvertable {
+			return nil, errors.New("failed to convert contact data raw (type " + reflect.ValueOf(contactDataRaw).String() +
+				") to contact data")
+		}
+		contacts = append(contacts, contactData)
+	}
+	return contacts, nil
 }
