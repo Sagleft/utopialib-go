@@ -2,6 +2,7 @@ package utopiago
 
 import (
 	"errors"
+	"reflect"
 	"strconv"
 )
 
@@ -222,4 +223,42 @@ func (c *UtopiaClient) SendInstantMessage(to string, message string) (int64, err
 		"text": message,
 	}
 	return c.queryResultToInt("sendInstantMessage", params)
+}
+
+// ContactData - user contact data
+type ContactData struct {
+	AuthStatus int    `json:"authorizationStatus"`
+	AvatarHash string `json:"avatarMd5"`
+	Group      string `json:"group"`
+	PubkeyHash string `json:"hashedPk"`
+	IsFriend   bool   `json:"isFriend"`
+	Nick       string `json:"nick"`
+	Pubkey     string `json:"pk"`
+	Status     int    `json:"status"`
+}
+
+// GetContacts - get account contacts
+func (c *UtopiaClient) GetContacts(filter string) ([]ContactData, error) {
+	// send request
+	params := map[string]interface{}{}
+	if filter != "" {
+		params["filter"] = filter
+	}
+	response, err := c.apiQuery("getContacts", params)
+	if err != nil {
+		return nil, err
+	}
+
+	// check result exists
+	result, isResultFound := response["result"]
+	if !isResultFound {
+		return nil, errors.New("accaptable result doesn't exists in client response")
+	}
+
+	// convert result
+	contactsData, isConvertable := result.([]ContactData)
+	if !isConvertable {
+		return nil, errors.New("failed to convert result (type " + reflect.ValueOf(result).String() + ") to contacts data")
+	}
+	return contactsData, nil
 }

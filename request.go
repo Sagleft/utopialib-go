@@ -28,8 +28,7 @@ func (c *UtopiaClient) getWsURL() string {
 	return "ws://" + c.Host + ":" + strconv.Itoa(c.WsPort) + "/UtopiaWSS?token=" + c.Token
 }
 
-func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}) (map[string]interface{}, error) {
-	var responseMap map[string]interface{}
+func (c *UtopiaClient) apiQuery2JSON(methodName string, params map[string]interface{}) ([]byte, error) {
 	var query = Query{
 		Method: methodName,
 		Token:  c.Token,
@@ -40,12 +39,12 @@ func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}
 
 	var jsonStr, err = json.Marshal(query)
 	if err != nil {
-		return responseMap, errors.New("failed to dedcode response json: " + err.Error())
+		return nil, errors.New("failed to decode response json: " + err.Error())
 	}
 
 	req, err := http.NewRequest("POST", c.getBaseURL(), bytes.NewBuffer(jsonStr))
 	if err != nil {
-		return responseMap, err
+		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 
@@ -53,19 +52,29 @@ func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}
 	resp, err := client.Do(req)
 	defer closeRequest(resp)
 	if err != nil {
-		return responseMap, err
+		return nil, err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return responseMap, errors.New("failed to read response body: " + err.Error())
+		return nil, errors.New("failed to read response body: " + err.Error())
 	}
 
-	if !json.Valid(body) {
+	return body, nil
+}
+
+func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}) (map[string]interface{}, error) {
+	var responseMap map[string]interface{}
+	jsonBody, err := c.apiQuery2JSON(methodName, params)
+	if err != nil {
+		return responseMap, err
+	}
+
+	if !json.Valid(jsonBody) {
 		return responseMap, errors.New("failed to validate json from client")
 	}
 
-	json.Unmarshal(body, &responseMap)
+	json.Unmarshal(jsonBody, &responseMap)
 	return responseMap, nil
 }
 
