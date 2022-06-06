@@ -61,4 +61,7 @@ type ContactData struct {
 type wsHandler struct {
 	WsURL string
 	Conn  evtwebsocket.Conn
+	Task  WsSubscribeTask
+
+	LastMessage []byte
 }

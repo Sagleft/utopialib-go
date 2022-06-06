@@ -100,31 +100,38 @@ func newWsEvent(jsonRaw []byte) (WsEvent, error) {
 func (c *UtopiaClient) newWsHandler(task WsSubscribeTask) *wsHandler {
 	h := wsHandler{
 		WsURL: c.getWsURL(),
-		Conn: evtwebsocket.Conn{
-			// Fires when the connection is established
-			OnConnected: func(w *evtwebsocket.Conn) {
-				task.OnConnected()
-			},
-			// Fires when a new message arrives from the server
-			OnMessage: func(msg []byte, w *evtwebsocket.Conn) {
-				event, err := newWsEvent(msg)
-				if err != nil {
-					task.ErrCallback(err)
-				} else {
-					task.Callback(event)
-				}
-			},
-			// Fires when an error occurs and connection is closed
-			OnError: func(err error) {
-				task.ErrCallback(err)
-			},
-		},
+		Conn:  evtwebsocket.Conn{},
 	}
+
+	h.Conn.OnConnected = h.onConnected
+	h.Conn.OnMessage = h.onMessage
+	h.Conn.OnError = h.onError
+
 	if !task.DisablePing {
 		h.Conn.PingIntervalSecs = 5     // ping interval in seconds
 		h.Conn.PingMsg = []byte("PING") // ping message to send
 	}
 	return &h
+}
+
+// Fires when the connection is established
+func (h *wsHandler) onConnected(w *evtwebsocket.Conn) {
+	h.Task.OnConnected()
+}
+
+// Fires when a new message arrives from the server
+func (h *wsHandler) onMessage(msg []byte, w *evtwebsocket.Conn) {
+	event, err := newWsEvent(msg)
+	if err != nil {
+		h.Task.ErrCallback(err)
+	} else {
+		h.Task.Callback(event)
+	}
+}
+
+// Fires when an error occurs and connection is closed
+func (h *wsHandler) onError(err error) {
+	h.Task.ErrCallback(err)
 }
 
 // NOTE: it's blocking method
