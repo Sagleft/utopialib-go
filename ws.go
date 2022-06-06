@@ -97,34 +97,48 @@ func newWsEvent(jsonRaw []byte) (WsEvent, error) {
 	return event, nil
 }
 
+type wsHandler struct {
+	WsURL string
+	Conn  evtwebsocket.Conn
+}
+
+func (c *UtopiaClient) newWsHandler(task WsSubscribeTask) *wsHandler {
+	h := wsHandler{
+		WsURL: c.getWsURL(),
+		Conn: evtwebsocket.Conn{
+			// Fires when the connection is established
+			OnConnected: func(w *evtwebsocket.Conn) {
+				task.OnConnected()
+			},
+			// Fires when a new message arrives from the server
+			OnMessage: func(msg []byte, w *evtwebsocket.Conn) {
+				event, err := newWsEvent(msg)
+				if err != nil {
+					task.ErrCallback(err)
+				} else {
+					task.Callback(event)
+				}
+			},
+			// Fires when an error occurs and connection is closed
+			OnError: func(err error) {
+				task.ErrCallback(err)
+			},
+		},
+	}
+	if !task.DisablePing {
+		h.Conn.PingIntervalSecs = 5     // ping interval in seconds
+		h.Conn.PingMsg = []byte("PING") // ping message to send
+	}
+	return &h
+}
+
+func (h *wsHandler) connect() error {
+	// open connection
+	return h.Conn.Dial(h.WsURL, "")
+}
+
 // WsSubscribe - connect to websocket & recive messages.
 // NOTE: it's blocking method
 func (c *UtopiaClient) WsSubscribe(task WsSubscribeTask) error {
-	conn := evtwebsocket.Conn{
-		// Fires when the connection is established
-		OnConnected: func(w *evtwebsocket.Conn) {
-			task.OnConnected()
-		},
-		// Fires when a new message arrives from the server
-		OnMessage: func(msg []byte, w *evtwebsocket.Conn) {
-			event, err := newWsEvent(msg)
-			if err != nil {
-				task.ErrCallback(err)
-			} else {
-				task.Callback(event)
-			}
-		},
-		// Fires when an error occurs and connection is closed
-		OnError: func(err error) {
-			task.ErrCallback(err)
-		},
-	}
-
-	if !task.DisablePing {
-		conn.PingIntervalSecs = 5     // ping interval in seconds
-		conn.PingMsg = []byte("PING") // ping message to send
-	}
-
-	// open connection
-	return conn.Dial(c.getWsURL(), "")
+	return c.newWsHandler(task).connect()
 }
