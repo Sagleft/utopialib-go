@@ -5,7 +5,7 @@ import (
 	"errors"
 	"reflect"
 
-	"github.com/rgamba/evtwebsocket"
+	"github.com/ctengiz/evtwebsocket"
 )
 
 // GetString - get string field from ws event.
@@ -125,26 +125,8 @@ func (h *wsHandler) onMessage(msg []byte, w *evtwebsocket.Conn) {
 	event, err := newWsEvent(msg)
 	if err == nil {
 		h.Task.Callback(event)
-		return
-	}
-
-	// check message part(s) when message splited to parts
-	if h.LastMessage == nil {
-		// wait for new parts
-		h.LastMessage = msg
-		return
-	}
-
-	// join message parts
-	h.LastMessage = append(h.LastMessage, msg...)
-	event, err = newWsEvent(msg)
-	if err != nil {
-		// failed to join message parts
-		h.LastMessage = msg // use last message as first part to new itterations
-		h.Task.ErrCallback(err)
-		return
 	} else {
-		h.Task.Callback(event)
+		h.Task.ErrCallback(err)
 	}
 }
 

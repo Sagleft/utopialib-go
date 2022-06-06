@@ -1,6 +1,6 @@
 package utopiago
 
-import "github.com/rgamba/evtwebsocket"
+import "github.com/ctengiz/evtwebsocket"
 
 // Query is a filter for API requests
 type Query struct {
@@ -62,6 +62,4 @@ type wsHandler struct {
 	WsURL string
 	Conn  evtwebsocket.Conn
 	Task  WsSubscribeTask
-
-	LastMessage []byte
 }
