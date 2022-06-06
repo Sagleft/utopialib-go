@@ -1,5 +1,7 @@
 package utopiago
 
+import "github.com/rgamba/evtwebsocket"
+
 // Query is a filter for API requests
 type Query struct {
 	Method string                 `json:"method"`
@@ -54,4 +56,9 @@ type ContactData struct {
 	Nick       string `json:"nick"`
 	Pubkey     string `json:"pk"`
 	Status     int    `json:"status"` // 65536 - offline, 4096 - online, 4097 - away, 4099 - do not disturb, 32768 - invisible
+}
+
+type wsHandler struct {
+	WsURL string
+	Conn  evtwebsocket.Conn
 }

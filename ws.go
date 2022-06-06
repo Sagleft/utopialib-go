@@ -97,11 +97,6 @@ func newWsEvent(jsonRaw []byte) (WsEvent, error) {
 	return event, nil
 }
 
-type wsHandler struct {
-	WsURL string
-	Conn  evtwebsocket.Conn
-}
-
 func (c *UtopiaClient) newWsHandler(task WsSubscribeTask) *wsHandler {
 	h := wsHandler{
 		WsURL: c.getWsURL(),
