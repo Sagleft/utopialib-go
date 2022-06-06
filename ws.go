@@ -101,6 +101,7 @@ func (c *UtopiaClient) newWsHandler(task WsSubscribeTask) *wsHandler {
 	h := wsHandler{
 		WsURL: c.getWsURL(),
 		Conn:  evtwebsocket.Conn{},
+		Task:  task,
 	}
 
 	h.Conn.OnConnected = h.onConnected
