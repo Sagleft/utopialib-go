@@ -127,6 +127,7 @@ func (c *UtopiaClient) newWsHandler(task WsSubscribeTask) *wsHandler {
 	return &h
 }
 
+// NOTE: it's blocking method
 func (h *wsHandler) connect() error {
 	// open connection
 	return h.Conn.Dial(h.WsURL, "")
