@@ -225,7 +225,8 @@ func (c *UtopiaClient) SendInstantMessage(to string, message string) (int64, err
 	return c.queryResultToInt("sendInstantMessage", params)
 }
 
-// GetContacts - get account contacts
+// GetContacts - get account contacts.
+// params: filter - contact pubkey or nickname
 func (c *UtopiaClient) GetContacts(filter string) ([]ContactData, error) {
 	// send request
 	params := map[string]interface{}{}
@@ -255,6 +256,19 @@ func (c *UtopiaClient) GetContacts(filter string) ([]ContactData, error) {
 	}
 
 	return contacts, nil
+}
+
+// GetContact data
+func (c *UtopiaClient) GetContact(pubkeyOrNick string) (ContactData, error) {
+	contacts, err := c.GetContacts(pubkeyOrNick)
+	if err != nil {
+		return ContactData{}, err
+	}
+
+	if len(contacts) == 0 {
+		return ContactData{}, errors.New("contact not found")
+	}
+	return contacts[0], nil
 }
 
 // IsOnline - is contact online?
