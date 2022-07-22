@@ -295,3 +295,15 @@ func (d *ContactData) IsDoNotDisturb() bool {
 func (d *ContactData) IsInvisible() bool {
 	return d.Status == 32768
 }
+
+// JoinChannel - join to channel or chat.
+// password is optional. returns join status (bool) and error
+func (c *UtopiaClient) JoinChannel(channelID string, password ...string) (bool, error) {
+	params := map[string]interface{}{
+		"ident": channelID,
+	}
+	if len(password) > 0 {
+		params["password"] = password[0]
+	}
+	return c.queryResultToBool("joinChannel", params)
+}
