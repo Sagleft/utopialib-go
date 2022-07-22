@@ -307,3 +307,34 @@ func (c *UtopiaClient) JoinChannel(channelID string, password ...string) (bool, 
 	}
 	return c.queryResultToBool("joinChannel", params)
 }
+
+// GetChannelContacts - get channel contacts
+func (c *UtopiaClient) GetChannelContacts(channelID string) ([]ChannelContactData, error) {
+	// send request
+	params := map[string]interface{}{
+		"channelid": channelID,
+	}
+	response, err := c.apiQuery("getChannelContacts", params)
+	if err != nil {
+		return nil, err
+	}
+
+	// check result exists
+	result, isResultFound := response["result"]
+	if !isResultFound {
+		return nil, errors.New("accaptable result doesn't exists in client response")
+	}
+
+	// convert result
+	jsonBytes, err := json.Marshal(result)
+	if err != nil {
+		return nil, errors.New("failed to encode response result: " + err.Error())
+	}
+	contacts := []ChannelContactData{}
+	err = json.Unmarshal(jsonBytes, &contacts)
+	if err != nil {
+		return nil, errors.New("failed to decode reconverted result: " + err.Error())
+	}
+
+	return contacts, nil
+}

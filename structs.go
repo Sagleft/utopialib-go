@@ -58,6 +58,16 @@ type ContactData struct {
 	Status     int    `json:"status"` // 65536 - offline, 4096 - online, 4097 - away, 4099 - do not disturb, 32768 - invisible
 }
 
+// ChannelContactData - channel contact data
+type ChannelContactData struct {
+	PubkeyHash  string `json:"hashedPk"`
+	LastSeen    string `json:"lastSeen"`
+	IsLocal     bool   `json:"local"`
+	IsModerator bool   `json:"moderator"`
+	Nick        string `json:"nick"`
+	Pubkey      string `json:"pk"`
+}
+
 type wsHandler struct {
 	WsURL string
 	Conn  evtwebsocket.Conn
