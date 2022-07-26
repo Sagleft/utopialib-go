@@ -124,9 +124,9 @@ func (h *wsHandler) onConnected(w *evtwebsocket.Conn) {
 func (h *wsHandler) onMessage(msg []byte, w *evtwebsocket.Conn) {
 	event, err := newWsEvent(msg)
 	if err == nil {
-		h.Task.Callback(event)
+		go h.Task.Callback(event)
 	} else {
-		h.Task.ErrCallback(err)
+		go h.Task.ErrCallback(err)
 	}
 }
 
