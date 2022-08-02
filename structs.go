@@ -68,6 +68,32 @@ type ChannelContactData struct {
 	Pubkey      string `json:"pk"`
 }
 
+// InstantMessage - contact message
+type InstantMessage struct {
+	ID               int         `json:"id"`
+	DateTime         string      `json:"dateTime"`
+	File             interface{} `json:"file"`
+	MessageType      int         `json:"messageType"`
+	Nick             string      `json:"nick"`             // message author nick
+	Pubkey           string      `json:"pk"`               // can be empty
+	ReadDateTime     *string     `json:"readDateTime"`     // can be nil when message is unread
+	ReceivedDateTime string      `json:"receivedDateTime"` // when message delivered
+	Text             string      `json:"text"`             // message text
+}
+
+// ChannelMessage - channel message data
+type ChannelMessage struct {
+	ChannelName string `json:"channel"`
+	ChannelID   string `json:"channelid"`
+	DateTime    string `json:"dateTime"`
+	PubkeyHash  string `json:"hashedPk"`
+	MessageType int    `json:"messageType"`
+	Nick        string `json:"nick"`    // message author nick
+	Pubkey      string `json:"pk"`      // can be empty
+	Text        string `json:"text"`    // message text
+	TopicID     string `json:"topicId"` // for reply
+}
+
 type wsHandler struct {
 	WsURL string
 	Conn  evtwebsocket.Conn
