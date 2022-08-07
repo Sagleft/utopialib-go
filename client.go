@@ -346,3 +346,13 @@ func (c *UtopiaClient) EnableReadOnly(channelID string, readOnly bool) error {
 	})
 	return err
 }
+
+// RemoveChannelMessage - remove channel message
+func (c *UtopiaClient) RemoveChannelMessage(channelID, messageID string) error {
+	params := map[string]interface{}{
+		"channelid":  channelID,
+		"id_message": messageID,
+	}
+	_, err := c.queryResultToString("removeChannelMessage", params)
+	return err
+}
