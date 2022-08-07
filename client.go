@@ -338,3 +338,11 @@ func (c *UtopiaClient) GetChannelContacts(channelID string) ([]ChannelContactDat
 
 	return contacts, nil
 }
+
+func (c *UtopiaClient) EnableReadOnly(channelID string, readOnly bool) error {
+	_, err := c.queryResultToBool("modifyChannel", map[string]interface{}{
+		"channelid": channelID,
+		"read_only": readOnly,
+	})
+	return err
+}
