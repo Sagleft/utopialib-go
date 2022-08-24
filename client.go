@@ -348,7 +348,7 @@ func (c *UtopiaClient) EnableReadOnly(channelID string, readOnly bool) error {
 }
 
 // RemoveChannelMessage - remove channel message
-func (c *UtopiaClient) RemoveChannelMessage(channelID, messageID int64) error {
+func (c *UtopiaClient) RemoveChannelMessage(channelID string, messageID int64) error {
 	params := map[string]interface{}{
 		"channelid":  channelID,
 		"id_message": messageID,
