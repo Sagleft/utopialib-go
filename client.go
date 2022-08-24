@@ -356,3 +356,38 @@ func (c *UtopiaClient) RemoveChannelMessage(channelID, messageID string) error {
 	_, err := c.queryResultToString("removeChannelMessage", params)
 	return err
 }
+
+// GetChannelMessages - get channel messages with filter (offset, max messages count)
+func (c *UtopiaClient) GetChannelMessages(channelID string, offset int, maxMessages int) ([]ChannelMessage, error) {
+	// send request
+	params := map[string]interface{}{
+		"channelid": channelID,
+	}
+	filters := map[string]interface{}{
+		"offset": offset,
+		"limit":  maxMessages,
+	}
+	response, err := c.apiQueryWithFilters("getChannelMessages", params, filters)
+	if err != nil {
+		return nil, err
+	}
+
+	// check result exists
+	result, isResultFound := response["result"]
+	if !isResultFound {
+		return nil, errors.New("accaptable result doesn't exists in client response")
+	}
+
+	// convert result
+	jsonBytes, err := json.Marshal(result)
+	if err != nil {
+		return nil, errors.New("failed to encode response result: " + err.Error())
+	}
+
+	messages := []ChannelMessage{}
+	err = json.Unmarshal(jsonBytes, &messages)
+	if err != nil {
+		return nil, errors.New("failed to decode reconverted result: " + err.Error())
+	}
+	return messages, nil
+}

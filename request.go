@@ -28,7 +28,11 @@ func (c *UtopiaClient) getWsURL() string {
 	return "ws://" + c.Host + ":" + strconv.Itoa(c.WsPort) + "/UtopiaWSS?token=" + c.Token
 }
 
-func (c *UtopiaClient) apiQuery2JSON(methodName string, params map[string]interface{}) ([]byte, error) {
+func (c *UtopiaClient) apiQuery2JSON(
+	methodName string,
+	params map[string]interface{},
+	filters map[string]interface{},
+) ([]byte, error) {
 	var query = Query{
 		Method: methodName,
 		Token:  c.Token,
@@ -64,8 +68,16 @@ func (c *UtopiaClient) apiQuery2JSON(methodName string, params map[string]interf
 }
 
 func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}) (map[string]interface{}, error) {
+	return c.apiQueryWithFilters(methodName, params, map[string]interface{}{})
+}
+
+func (c *UtopiaClient) apiQueryWithFilters(
+	methodName string,
+	params,
+	filters map[string]interface{},
+) (map[string]interface{}, error) {
 	var responseMap map[string]interface{}
-	jsonBody, err := c.apiQuery2JSON(methodName, params)
+	jsonBody, err := c.apiQuery2JSON(methodName, params, filters)
 	if err != nil {
 		return responseMap, err
 	}

@@ -90,8 +90,8 @@ func (ws *WsEvent) GetFloat(field string) (float64, error) {
 
 // GetChannelMessage - get the event data converted to ChannelMessage.
 // actual only for `newPrivateChannelMessage` and `newChannelMessage` events
-func (ws *WsEvent) GetChannelMessage() (ChannelMessage, error) {
-	result := ChannelMessage{}
+func (ws *WsEvent) GetChannelMessage() (WsChannelMessage, error) {
+	result := WsChannelMessage{}
 	eventBytes, err := json.Marshal(ws.Data)
 	if err != nil {
 		return result, errors.New("failed to encode channel message: " + err.Error())

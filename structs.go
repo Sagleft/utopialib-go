@@ -81,12 +81,27 @@ type InstantMessage struct {
 	Text             string      `json:"text"`             // message text
 }
 
-// ChannelMessage - channel message data
-type ChannelMessage struct {
+// WsChannelMessage - channel message data
+type WsChannelMessage struct {
+	ID          int64  `json:"id"`
 	ChannelName string `json:"channel"`
 	ChannelID   string `json:"channelid"`
 	DateTime    string `json:"dateTime"`
 	PubkeyHash  string `json:"hashedPk"`
+	IsIncoming  bool   `json:"isIncoming"`
+	MessageType int    `json:"messageType"`
+	Nick        string `json:"nick"`    // message author nick
+	Pubkey      string `json:"pk"`      // can be empty
+	Text        string `json:"text"`    // message text
+	TopicID     string `json:"topicId"` // for reply
+}
+
+// ChannelMessage - channel message data
+type ChannelMessage struct {
+	ID          int64  `json:"id"`
+	DateTime    string `json:"dateTime"`
+	PubkeyHash  string `json:"hashedPk"`
+	IsIncoming  bool   `json:"isIncoming"`
 	MessageType int    `json:"messageType"`
 	Nick        string `json:"nick"`    // message author nick
 	Pubkey      string `json:"pk"`      // can be empty
