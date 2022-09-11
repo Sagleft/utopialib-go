@@ -147,6 +147,16 @@ func (c *UtopiaClient) SendChannelMessage(channelID, message string) (string, er
 	return c.queryResultToString("sendChannelMessage", params)
 }
 
+// SendChannelContactMessage - send channel message to contact in private mode
+func (c *UtopiaClient) SendChannelContactMessage(channelID, contactPubkeyHash, message string) (string, error) {
+	params := map[string]interface{}{
+		"channelid":       channelID,
+		"contactHashedPk": contactPubkeyHash,
+		"message":         message,
+	}
+	return c.queryResultToString("sendChannelPrivateMessageToContact", params)
+}
+
 // SendChannelPicture - send channel picture & get message ID
 func (c *UtopiaClient) SendChannelPicture(channelID, base64Image, comment, filenameForImage string) (string, error) {
 	params := map[string]interface{}{
