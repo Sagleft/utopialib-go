@@ -33,8 +33,31 @@ func (c *UtopiaClient) SetProfileStatus(status string, mood string) error {
 }
 
 // GetOwnContact asks for full details of the current account
-func (c *UtopiaClient) GetOwnContact() (map[string]interface{}, error) {
-	return c.apiQuery("getOwnContact", nil)
+func (c *UtopiaClient) GetOwnContact() (OwnContactData, error) {
+	response, err := c.apiQuery("getOwnContact", nil)
+	if err != nil {
+		return OwnContactData{}, err
+	}
+
+	// check result exists
+	result, isResultFound := response["result"]
+	if !isResultFound {
+		return OwnContactData{}, errors.New("accaptable result doesn't exists in client response")
+	}
+
+	// convert result
+	jsonBytes, err := json.Marshal(result)
+	if err != nil {
+		return OwnContactData{}, errors.New("failed to encode response result: " + err.Error())
+	}
+
+	ownContact := OwnContactData{}
+	err = json.Unmarshal(jsonBytes, &ownContact)
+	if err != nil {
+		return OwnContactData{}, errors.New("failed to decode reconverted result: " + err.Error())
+	}
+
+	return ownContact, nil
 }
 
 // CheckClientConnection - checks if there are any errors when contacting the client

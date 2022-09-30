@@ -46,6 +46,19 @@ type WsSubscribeTask struct {
 	DisablePing bool
 }
 
+// OwnContactData - own account data
+type OwnContactData struct {
+	AvatarHash string `json:"avatarMd5"`
+	FirstName  string `json:"firstName"`
+	LastName   string `json:"lastName"`
+	PubkeyHash string `json:"hashedPk"`
+	IsFriend   bool   `json:"isFriend"`
+	Mood       string `json:"moodMessage"`
+	Nick       string `json:"nick"`
+	Pubkey     string `json:"pk"`
+	Status     int    `json:"status"`
+}
+
 // ContactData - user contact data
 type ContactData struct {
 	AuthStatus int    `json:"authorizationStatus"`
