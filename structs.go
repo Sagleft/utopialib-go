@@ -40,7 +40,6 @@ type WsSubscribeTask struct {
 	OnConnected func()           // required
 	Callback    WsEventsCallback // required
 	ErrCallback WsErrorCallback  // required
-	Port        int
 
 	// optional
 	DisablePing bool
