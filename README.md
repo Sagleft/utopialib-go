@@ -29,6 +29,20 @@ Usage
 -----
 
 ```go
+client := utopiago.NewClient("C17BF2E95821A6B545DC9A193CBB750B").
+	SetProtocol("http").SetPort(22000).SetWsPort(25000)
+
+myContactData, err := client.GetOwnContact()
+if err != nil {
+	log.Fatalln(err)
+}
+
+fmt.Println(myContactData.Pubkey)
+```
+
+or
+
+```go
 client := utopiago.UtopiaClient{
 	Protocol: "http",
 	Token:    "C17BF2E95821A6B545DC9A193CBB750B",
@@ -36,7 +50,7 @@ client := utopiago.UtopiaClient{
 	Port:     22791,
 }
 
-fmt.Println(client.GetSystemInfo())
+fmt.Println(client.CheckClientConnection())
 ```
 
 How can this be used?
