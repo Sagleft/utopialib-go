@@ -33,7 +33,7 @@ func (c *UtopiaClient) SetPort(port int) *UtopiaClient {
 	return c
 }
 
-func (c *UtopiaClient) SetWsDefaultPort(wsPort int) *UtopiaClient {
+func (c *UtopiaClient) SetWsPort(wsPort int) *UtopiaClient {
 	c.WsPort = wsPort
 	return c
 }
