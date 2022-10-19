@@ -9,7 +9,9 @@ import (
 	"net/http"
 	"reflect"
 	"strconv"
+	"time"
 
+	simplecron "github.com/sagleft/simple-cron"
 	"gopkg.in/grignaak/tribool.v1"
 )
 
@@ -76,18 +78,32 @@ func (c *UtopiaClient) apiQueryWithFilters(
 	params,
 	filters map[string]interface{},
 ) (map[string]interface{}, error) {
-	var responseMap map[string]interface{}
-	jsonBody, err := c.apiQuery2JSON(methodName, params, filters)
+
+	var err error
+	var jsonBody []byte
+	var r map[string]interface{}
+
+	if c.RequestTimeoutSeconds == 0 {
+		jsonBody, err = c.apiQuery2JSON(methodName, params, filters)
+	} else {
+		if simplecron.NewRuntimeLimitHandler(time.Duration(c.RequestTimeoutSeconds), func() {
+			jsonBody, err = c.apiQuery2JSON(methodName, params, filters)
+		}).Run() {
+			err = fmt.Errorf("failed to call %s: timeout", methodName)
+		}
+	}
 	if err != nil {
-		return responseMap, err
+		return r, err
 	}
 
 	if !json.Valid(jsonBody) {
-		return responseMap, errors.New("failed to validate json from client")
+		return r, errors.New("failed to validate response")
 	}
 
-	json.Unmarshal(jsonBody, &responseMap)
-	return responseMap, nil
+	if err := json.Unmarshal(jsonBody, &r); err != nil {
+		return r, fmt.Errorf("failed to decode response: %w", err)
+	}
+	return r, nil
 }
 
 func closeRequest(resp *http.Response) {

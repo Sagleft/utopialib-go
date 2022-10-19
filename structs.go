@@ -11,11 +11,15 @@ type Query struct {
 
 // UtopiaClient lets you connect to Utopia Client
 type UtopiaClient struct {
+	// required
 	Protocol string `json:"protocol"`
 	Host     string `json:"host"`
 	Token    string `json:"token"`
 	Port     int    `json:"port"`
-	WsPort   int    `json:"wsport"`
+
+	// optional
+	RequestTimeoutSeconds int `json:"timeout"`
+	WsPort                int `json:"wsport"`
 }
 
 // WsEvent - websocket event from Utopia Client
