@@ -11,7 +11,6 @@ import (
 	"strconv"
 	"time"
 
-	simplecron "github.com/sagleft/simple-cron"
 	"gopkg.in/grignaak/tribool.v1"
 )
 
@@ -34,6 +33,7 @@ func (c *UtopiaClient) apiQuery2JSON(
 	methodName string,
 	params map[string]interface{},
 	filters map[string]interface{},
+	timeout time.Duration,
 ) ([]byte, error) {
 	var query = Query{
 		Method: methodName,
@@ -55,6 +55,10 @@ func (c *UtopiaClient) apiQuery2JSON(
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
+	if timeout > 0 {
+		client.Timeout = timeout
+	}
+
 	resp, err := client.Do(req)
 	defer closeRequest(resp)
 	if err != nil {
@@ -79,19 +83,13 @@ func (c *UtopiaClient) apiQueryWithFilters(
 	filters map[string]interface{},
 ) (map[string]interface{}, error) {
 
-	var err error
-	var jsonBody []byte
 	var r map[string]interface{}
-
-	if c.RequestTimeoutSeconds == 0 {
-		jsonBody, err = c.apiQuery2JSON(methodName, params, filters)
-	} else {
-		if simplecron.NewRuntimeLimitHandler(time.Duration(c.RequestTimeoutSeconds), func() {
-			jsonBody, err = c.apiQuery2JSON(methodName, params, filters)
-		}).Run() {
-			err = fmt.Errorf("failed to call %s: timeout", methodName)
-		}
+	var timeoutDuration time.Duration
+	if c.RequestTimeoutSeconds > 0 {
+		timeoutDuration = time.Duration(c.RequestTimeoutSeconds) * time.Second
 	}
+
+	jsonBody, err := c.apiQuery2JSON(methodName, params, filters, timeoutDuration)
 	if err != nil {
 		return r, err
 	}
