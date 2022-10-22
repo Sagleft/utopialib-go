@@ -9,5 +9,6 @@ func CheckErrorConnBroken(err error) bool {
 	}
 
 	return strings.Contains(err.Error(), "read: connection reset by peer") ||
-		strings.Contains(err.Error(), "context deadline exceeded")
+		strings.Contains(err.Error(), "context deadline exceeded") ||
+		strings.Contains(err.Error(), "client disconected")
 }
