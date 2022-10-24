@@ -9,6 +9,7 @@ var connBrokenErrorInfo = []string{
 	"context deadline exceeded",
 	"client disconected",
 	"connection refused",
+	"EOF",
 }
 
 // CheckErrorConnBroken - check the text of the request error, determining whether the client must be restarted
