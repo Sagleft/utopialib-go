@@ -1,6 +1,8 @@
 package utopiago
 
-import "github.com/ctengiz/evtwebsocket"
+import (
+	"github.com/ctengiz/evtwebsocket"
+)
 
 // Query is a filter for API requests
 type Query struct {
@@ -11,6 +13,9 @@ type Query struct {
 
 // UtopiaClient lets you connect to Utopia Client
 type UtopiaClient struct {
+	// protected
+	logCallback LogCallback
+
 	// required
 	Protocol string `json:"protocol"`
 	Host     string `json:"host"`

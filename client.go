@@ -44,6 +44,10 @@ func (c *UtopiaClient) SetWsPort(wsPort int) *UtopiaClient {
 	return c
 }
 
+func (c *UtopiaClient) SetLogsCallback(cb LogCallback) {
+	c.logCallback = cb
+}
+
 // GetProfileStatus gets data about the status of the current account
 func (c *UtopiaClient) GetProfileStatus() (map[string]interface{}, error) {
 	return c.apiQuery("getProfileStatus", nil)

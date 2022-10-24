@@ -35,6 +35,18 @@ func (c *UtopiaClient) apiQuery2JSON(
 	filters map[string]interface{},
 	timeout time.Duration,
 ) ([]byte, error) {
+
+	l := logData{
+		TimeCreated: time.Now(),
+		Timestamp:   time.Now().UnixMilli(),
+		APIURL:      c.getBaseURL(),
+		APIMethod:   methodName,
+		RequestType: "POST",
+		RequestData: params,
+		Filters:     filters,
+	}
+	defer l.handle(c.logCallback)
+
 	var query = Query{
 		Method: methodName,
 		Token:  c.Token,
@@ -45,12 +57,12 @@ func (c *UtopiaClient) apiQuery2JSON(
 
 	var jsonStr, err = json.Marshal(query)
 	if err != nil {
-		return nil, errors.New("failed to decode response json: " + err.Error())
+		return nil, l.useError(fmt.Errorf("failed to decode response json: %w", err))
 	}
 
-	req, err := http.NewRequest("POST", c.getBaseURL(), bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest(l.RequestType, l.APIURL, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		return nil, err
+		return nil, l.useError(fmt.Errorf("failed to create request: %w", err))
 	}
 	req.Header.Set("Content-Type", "application/json")
 
@@ -62,14 +74,15 @@ func (c *UtopiaClient) apiQuery2JSON(
 	resp, err := client.Do(req)
 	defer closeRequest(resp)
 	if err != nil {
-		return nil, err
+		return nil, l.useError(fmt.Errorf("failed to send request: %w", err))
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.New("failed to read response body: " + err.Error())
+		return nil, l.useError(fmt.Errorf("failed to read response body: %w", err))
 	}
 
+	l.useResponse(body)
 	return body, nil
 }
 
@@ -82,7 +95,6 @@ func (c *UtopiaClient) apiQueryWithFilters(
 	params,
 	filters map[string]interface{},
 ) (map[string]interface{}, error) {
-
 	var r map[string]interface{}
 	var timeoutDuration time.Duration
 	if c.RequestTimeoutSeconds > 0 {
