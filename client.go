@@ -3,7 +3,13 @@ package utopiago
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
+)
+
+const (
+	MaxCharactersInPaymentComment = 148
+	DefaultCurrencyTag            = "CRP"
 )
 
 // NewClient - create client with default data:
@@ -455,4 +461,35 @@ func (c *UtopiaClient) GetChannelMessages(channelID string, offset int, maxMessa
 		return nil, errors.New("failed to decode reconverted result: " + err.Error())
 	}
 	return messages, nil
+}
+
+type SendPaymentTask struct {
+	// required
+	To     string  `json:"to"`     // pubkey, nickname or card ID
+	Amount float64 `json:"amount"` // more than zero, no more than 9 decimal places
+
+	// optional
+	CurrencyTag string `json:"currency"`   // example: "CRP", "UUSD". by default: "CRP"
+	FromCardID  string `json:"fromCardID"` // specify here your card ID
+	Comment     string `json:"comment"`
+}
+
+// SendPayment - send coins
+func (c *UtopiaClient) SendPayment(task SendPaymentTask) (string, error) {
+	if task.Comment != "" && len(task.Comment) > MaxCharactersInPaymentComment {
+		return "", fmt.Errorf("comment max length is %v characters", MaxCharactersInPaymentComment)
+	}
+
+	if task.CurrencyTag == "" {
+		task.CurrencyTag = DefaultCurrencyTag
+	}
+
+	params := map[string]interface{}{
+		"to":       task.To,
+		"comment":  task.Comment,
+		"cardid":   task.FromCardID,
+		"amount":   task.Amount,
+		"currency": task.CurrencyTag,
+	}
+	return c.queryResultToString("sendPayment", params)
 }
