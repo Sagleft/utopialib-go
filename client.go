@@ -493,9 +493,9 @@ func (c *UtopiaClient) GetChannelInfo(channelID string) (ChannelData, error) {
 
 type GetChannelsTask struct {
 	// optional
-	SearchFilter string // part of channel name or channel ID, etc
-	ChannelType  ChannelType
-	FromDate     string // date example: 2019-11-23T10:00:00.001
+	SearchFilter string      // part of channel name or channel ID, etc
+	ChannelType  ChannelType // by default: 0 - registered
+	FromDate     string      // date example: 2019-11-23T10:00:00.001
 	ToDate       string
 }
 
