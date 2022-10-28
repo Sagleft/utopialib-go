@@ -12,6 +12,20 @@ const (
 	DefaultCurrencyTag            = "CRP"
 )
 
+const (
+	ChannelTypeRegistered ChannelType = iota
+	ChannelTypeRecent
+	ChannelTypeMy
+	ChannelTypeFriends
+	ChannelTypeBookmarked
+	ChannelTypeJoined
+	ChannelTypeOpened
+	ChannelTypeBlackList
+	ChannelTypeDeleted
+)
+
+type ChannelType int
+
 // NewClient - create client with default data:
 // http protocol, localhost, default port (20000)
 func NewClient(token string) *UtopiaClient {
@@ -459,6 +473,7 @@ func (c *UtopiaClient) SendPayment(task SendPaymentTask) (string, error) {
 	return c.queryResultToString("sendPayment", params)
 }
 
+// GetChannelInfo - get specific channel info
 func (c *UtopiaClient) GetChannelInfo(channelID string) (ChannelData, error) {
 	params := map[string]interface{}{
 		"channelid": channelID,
@@ -471,6 +486,40 @@ func (c *UtopiaClient) GetChannelInfo(channelID string) (ChannelData, error) {
 	data := ChannelData{}
 	if err := convertResult(response, &data); err != nil {
 		return ChannelData{}, err
+	}
+
+	return data, nil
+}
+
+type GetChannelsTask struct {
+	// optional
+	SearchFilter string // part of channel name or channel ID, etc
+	ChannelType  ChannelType
+	FromDate     string // date example: 2019-11-23T10:00:00.001
+	ToDate       string
+}
+
+// GetChannels get available channels
+func (c *UtopiaClient) GetChannels(task GetChannelsTask) (SearchChannelData, error) {
+	params := map[string]interface{}{
+		"filter":       task.SearchFilter,
+		"channel_type": task.ChannelType,
+	}
+	if task.FromDate != "" {
+		params["from"] = task.FromDate
+	}
+	if task.ToDate != "" {
+		params["to"] = task.ToDate
+	}
+
+	response, err := c.apiQuery("getChannels", params)
+	if err != nil {
+		return SearchChannelData{}, err
+	}
+
+	data := SearchChannelData{}
+	if err := convertResult(response, &data); err != nil {
+		return SearchChannelData{}, err
 	}
 
 	return data, nil

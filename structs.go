@@ -150,3 +150,15 @@ type ChannelData struct {
 	Title            string `json:"title"`
 	Type             string `json:"type"` // public
 }
+
+type SearchChannelData struct {
+	AvatarID    string `json:"avatarId"`    // example: defAvatar_F10383EA72AC6263C21F356CD8D2E2A2
+	ChannelID   string `json:"channelid"`   // F10383EA72AC6263C21F356CD8D2E2A2
+	CreatedOn   string `json:"created"`     // 2022-01-28T16:11:39.144Z
+	Description string `json:"description"` // can be empty
+	IsJoined    bool   `json:"isjoined"`    // false
+	IsPrivate   bool   `json:"isprivate"`   // true
+	EditedOn    string `json:"modified"`    // 2022-01-28T16:11:39.145Z
+	Name        string `json:"name"`        // Monica
+	OwnerPubkey string `json:"owner"`       // 1B742E8D8DAE682ADD2568BE25B23F35BA7A8BFC1D5D3BCA0EE219A754A48201
+}
