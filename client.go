@@ -500,7 +500,7 @@ type GetChannelsTask struct {
 }
 
 // GetChannels get available channels
-func (c *UtopiaClient) GetChannels(task GetChannelsTask) (SearchChannelData, error) {
+func (c *UtopiaClient) GetChannels(task GetChannelsTask) ([]SearchChannelData, error) {
 	params := map[string]interface{}{
 		"filter":       task.SearchFilter,
 		"channel_type": task.ChannelType,
@@ -514,12 +514,12 @@ func (c *UtopiaClient) GetChannels(task GetChannelsTask) (SearchChannelData, err
 
 	response, err := c.apiQuery("getChannels", params)
 	if err != nil {
-		return SearchChannelData{}, err
+		return nil, err
 	}
 
-	data := SearchChannelData{}
+	data := []SearchChannelData{}
 	if err := convertResult(response, &data); err != nil {
-		return SearchChannelData{}, err
+		return nil, err
 	}
 
 	return data, nil
