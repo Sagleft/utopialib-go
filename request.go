@@ -218,3 +218,23 @@ func (c *UtopiaClient) queryResultToInt(methodName string, params map[string]int
 	result, err := strconv.ParseInt(resultstr, 10, 64)
 	return result, err
 }
+
+func convertResult(response map[string]interface{}, toInterface interface{}) error {
+	// check result exists
+	result, isResultFound := response["result"]
+	if !isResultFound {
+		return errors.New("accaptable result doesn't exists in client response")
+	}
+
+	// convert result
+	jsonBytes, err := json.Marshal(result)
+	if err != nil {
+		return fmt.Errorf("failed to encode response result: %w", err)
+	}
+
+	err = json.Unmarshal(jsonBytes, toInterface)
+	if err != nil {
+		return fmt.Errorf("failed to decode reconverted result: %w", err)
+	}
+	return nil
+}

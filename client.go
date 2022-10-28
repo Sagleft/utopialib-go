@@ -313,24 +313,11 @@ func (c *UtopiaClient) GetContacts(filter string) ([]ContactData, error) {
 		return nil, err
 	}
 
-	// check result exists
-	result, isResultFound := response["result"]
-	if !isResultFound {
-		return nil, errors.New("accaptable result doesn't exists in client response")
+	data := []ContactData{}
+	if err := convertResult(response, &data); err != nil {
+		return nil, err
 	}
-
-	// convert result
-	jsonBytes, err := json.Marshal(result)
-	if err != nil {
-		return nil, errors.New("failed to encode response result: " + err.Error())
-	}
-	contacts := []ContactData{}
-	err = json.Unmarshal(jsonBytes, &contacts)
-	if err != nil {
-		return nil, errors.New("failed to decode reconverted result: " + err.Error())
-	}
-
-	return contacts, nil
+	return data, nil
 }
 
 // GetContact data
@@ -394,24 +381,11 @@ func (c *UtopiaClient) GetChannelContacts(channelID string) ([]ChannelContactDat
 		return nil, err
 	}
 
-	// check result exists
-	result, isResultFound := response["result"]
-	if !isResultFound {
-		return nil, errors.New("accaptable result doesn't exists in client response")
+	data := []ChannelContactData{}
+	if err := convertResult(response, &data); err != nil {
+		return nil, err
 	}
-
-	// convert result
-	jsonBytes, err := json.Marshal(result)
-	if err != nil {
-		return nil, errors.New("failed to encode response result: " + err.Error())
-	}
-	contacts := []ChannelContactData{}
-	err = json.Unmarshal(jsonBytes, &contacts)
-	if err != nil {
-		return nil, errors.New("failed to decode reconverted result: " + err.Error())
-	}
-
-	return contacts, nil
+	return data, nil
 }
 
 func (c *UtopiaClient) EnableReadOnly(channelID string, readOnly bool) error {
@@ -447,24 +421,11 @@ func (c *UtopiaClient) GetChannelMessages(channelID string, offset int, maxMessa
 		return nil, err
 	}
 
-	// check result exists
-	result, isResultFound := response["result"]
-	if !isResultFound {
-		return nil, errors.New("accaptable result doesn't exists in client response")
+	data := []ChannelMessage{}
+	if err := convertResult(response, &data); err != nil {
+		return nil, err
 	}
-
-	// convert result
-	jsonBytes, err := json.Marshal(result)
-	if err != nil {
-		return nil, errors.New("failed to encode response result: " + err.Error())
-	}
-
-	messages := []ChannelMessage{}
-	err = json.Unmarshal(jsonBytes, &messages)
-	if err != nil {
-		return nil, errors.New("failed to decode reconverted result: " + err.Error())
-	}
-	return messages, nil
+	return data, nil
 }
 
 type SendPaymentTask struct {
@@ -496,4 +457,21 @@ func (c *UtopiaClient) SendPayment(task SendPaymentTask) (string, error) {
 		"currency": task.CurrencyTag,
 	}
 	return c.queryResultToString("sendPayment", params)
+}
+
+func (c *UtopiaClient) GetChannelInfo(channelID string) (ChannelData, error) {
+	params := map[string]interface{}{
+		"channelid": channelID,
+	}
+	response, err := c.apiQuery("getChannelInfo", params)
+	if err != nil {
+		return ChannelData{}, err
+	}
+
+	data := ChannelData{}
+	if err := convertResult(response, &data); err != nil {
+		return ChannelData{}, err
+	}
+
+	return data, nil
 }

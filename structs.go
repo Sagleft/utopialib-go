@@ -135,3 +135,18 @@ type wsHandler struct {
 	Conn  evtwebsocket.Conn
 	Task  WsSubscribeTask
 }
+
+type ChannelData struct {
+	HideInCommonList bool   `json:"HideInCommonList"` // example: false
+	CreatedOn        string `json:"created"`          // 2022-09-09T05:47:52.972Z
+	ModifiedOn       string `json:"modified"`         // 2022-09-09T05:47:52.973Z
+	Description      string `json:"description"`
+	GeoTag           string `json:"geotag"`
+	HasgTags         string `json:"hashtags"`
+	Languages        string `json:"languages"`
+	Owner            string `json:"owner"`
+	ReadOnly         bool   `json:"readonly"`
+	ReadOnlyPrivacy  bool   `json:"readonly_privacy"`
+	Title            string `json:"title"`
+	Type             string `json:"type"` // public
+}
