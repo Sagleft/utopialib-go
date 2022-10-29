@@ -524,3 +524,15 @@ func (c *UtopiaClient) GetChannels(task GetChannelsTask) ([]SearchChannelData, e
 
 	return data, nil
 }
+
+func (c *UtopiaClient) ToogleChannelNotifications(channelID string, enabled bool) error {
+	params := map[string]interface{}{
+		"channelid": channelID,
+		"enabled":   enabled,
+	}
+
+	if _, err := c.queryResultToBool("enableChannelNotification", params); err != nil {
+		return err
+	}
+	return nil
+}
