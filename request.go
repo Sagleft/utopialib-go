@@ -82,7 +82,7 @@ func (c *UtopiaClient) apiQuery2JSON(
 		return nil, l.useError(fmt.Errorf("failed to read response body: %w", err))
 	}
 
-	l.useResponse(body)
+	//l.useResponse(body)
 	return body, nil
 }
 
