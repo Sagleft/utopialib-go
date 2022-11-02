@@ -24,6 +24,16 @@ const (
 	ChannelTypeDeleted
 )
 
+const (
+	SortChannelsByCreated SortChannelsBy = iota + 1
+	SortChannelsByIsPrivate
+	SortChannelsByModified
+	SortChannelsByName
+	SortChannelsByDescription
+)
+
+type SortChannelsBy int
+
 type ChannelType int
 
 // NewClient - create client with default data:
@@ -497,6 +507,7 @@ type GetChannelsTask struct {
 	ChannelType  ChannelType // by default: 0 - registered
 	FromDate     string      // date example: 2019-11-23T10:00:00.001
 	ToDate       string
+	SortBy       SortChannelsBy
 }
 
 // GetChannels get available channels
@@ -512,7 +523,21 @@ func (c *UtopiaClient) GetChannels(task GetChannelsTask) ([]SearchChannelData, e
 		params["to"] = task.ToDate
 	}
 
-	response, err := c.apiQuery("getChannels", params)
+	filters := map[string]interface{}{}
+	switch task.SortBy {
+	case SortChannelsByCreated:
+		filters["sortBy"] = "created"
+	case SortChannelsByIsPrivate:
+		filters["sortBy"] = "isprivate"
+	case SortChannelsByName:
+		filters["sortBy"] = "name"
+	case SortChannelsByModified:
+		filters["sortBy"] = "modified"
+	case SortChannelsByDescription:
+		filters["sortBy"] = "description"
+	}
+
+	response, err := c.apiQueryWithFilters("getChannels", params, filters)
 	if err != nil {
 		return nil, err
 	}

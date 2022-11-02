@@ -6,9 +6,10 @@ import (
 
 // Query is a filter for API requests
 type Query struct {
-	Method string                 `json:"method"`
-	Token  string                 `json:"token"`
-	Params map[string]interface{} `json:"params"`
+	Method  string                 `json:"method"`
+	Token   string                 `json:"token"`
+	Params  map[string]interface{} `json:"params"`
+	Filters map[string]interface{} `json:"filter"`
 }
 
 // UtopiaClient lets you connect to Utopia Client
