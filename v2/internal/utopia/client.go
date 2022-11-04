@@ -64,12 +64,36 @@ func (c *UtopiaClient) GetFinanceInfo() (structs.FinanceInfo, error) {
 }
 
 // GetFinanceHistory request the necessary financial statistics
-func (c *UtopiaClient) GetFinanceHistory(filters string, referenceNumber string) ([]interface{}, error) {
-	params := uMap{
-		"filters":         filters,
-		"referenceNumber": referenceNumber,
+func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
+	[]structs.FinanceHistoryData,
+	error,
+) {
+	params := newMapBuilder().
+		add(task.Currency, "", "currency").
+		add(task.Filters, "", "filters").
+		add(task.ReferenceNumber, "", "referenceNumber").
+		add(task.BatchID, 0, "batchId").
+		add(task.FromAmount, 0, "fromAmount").
+		add(task.ToAmount, 0, "toAmount").
+		add(task.SourcePubkey, "", "sourcePk").
+		add(task.DestinationPubkey, "", "destinationPk").
+		getMap()
+
+	if !task.FromDate.IsZero() {
+		params["fromDate"] = task.FromDate.Format(defaultTimeLayout)
 	}
-	return c.queryResultToInterfaceArray("getFinanceHistory", params)
+	if !task.ToDate.IsZero() {
+		params["toDate"] = task.ToDate.Format(defaultTimeLayout)
+	}
+
+	filters := newMapBuilder().
+		add(task.QueryOffset, 0, "offset").
+		add(task.QueryLimitRows, 0, "limitRows").
+		getMap()
+
+	r := []structs.FinanceHistoryData{}
+	err := c.retrieveStruct("getFinanceHistory", params, filters, &r)
+	return r, err
 }
 
 // GetBalance request account Crypton balance

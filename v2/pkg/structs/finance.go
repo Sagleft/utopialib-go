@@ -58,3 +58,5 @@ type UUSDFinanceInfo struct {
 	VouchersMinPerBatch   uint    `json:"vouchersMinPerBatch"`
 	VouchersUseEnabled    bool    `json:"vouchersUseEnabled"`
 }
+
+type FinanceHistoryData struct{}

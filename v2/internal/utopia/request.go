@@ -148,25 +148,6 @@ func closeRequest(resp *http.Response) {
 	}
 }
 
-func (c *UtopiaClient) queryResultToInterfaceArray(
-	methodName string,
-	params map[string]interface{},
-) ([]interface{}, error) {
-	if !c.CheckClientConnection() {
-		return nil, errors.New("client disconected")
-	}
-	response, err := c.apiQuery(methodName, params)
-	if result, ok := response["result"]; ok {
-		//check type assertion
-		IResult, isConvertable := result.([]interface{})
-		if !isConvertable {
-			return nil, errors.New("failed to get result array")
-		}
-		return IResult, err
-	}
-	return nil, errors.New("accaptable result doesn't exists in client response")
-}
-
 func (c *UtopiaClient) queryResultToStringsArray(
 	methodName string,
 	params map[string]interface{},
