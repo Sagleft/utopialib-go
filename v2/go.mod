@@ -1,4 +1,4 @@
-module github.com/Sagleft/utopialib-go
+module github.com/Sagleft/utopialib-go/v2
 
 go 1.16
 
