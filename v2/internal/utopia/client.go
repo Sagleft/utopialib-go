@@ -68,14 +68,14 @@ func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 	error,
 ) {
 	params := uMap{}.
-		add(task.Currency, "", "currency").
-		add(task.Filters, "", "filters").
-		add(task.ReferenceNumber, "", "referenceNumber").
-		add(task.BatchID, 0, "batchId").
-		add(task.FromAmount, 0, "fromAmount").
-		add(task.ToAmount, 0, "toAmount").
-		add(task.SourcePubkey, "", "sourcePk").
-		add(task.DestinationPubkey, "", "destinationPk")
+		add("currency", task.Currency, "").
+		add("filters", task.Filters, "").
+		add("referenceNumber", task.ReferenceNumber, "").
+		add("batchId", task.BatchID, 0).
+		add("fromAmount", task.FromAmount, 0).
+		add("toAmount", task.ToAmount, 0).
+		add("sourcePk", task.SourcePubkey, "").
+		add("destinationPk", task.DestinationPubkey, "")
 
 	if !task.FromDate.IsZero() {
 		params["fromDate"] = task.FromDate.Format(defaultTimeLayout)
@@ -85,8 +85,8 @@ func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 	}
 
 	filters := uMap{}.
-		add(task.QueryOffset, 0, "offset").
-		add(task.QueryLimitRows, 0, "limitRows")
+		add("offset", task.QueryOffset, 0).
+		add("limitRows", task.QueryLimitRows, 0)
 
 	r := []structs.FinanceHistoryData{}
 	err := c.retrieveStruct("getFinanceHistory", params, filters, &r)
@@ -102,10 +102,7 @@ func (c *UtopiaClient) GetUUSDBalance() (float64, error) {
 }
 
 func (c *UtopiaClient) createCoinVoucher(amount float64, coin string) (string, error) {
-	params := uMap{
-		"amount":   amount,
-		"currency": coin,
-	}
+	params := uMap{}.set("amount", amount).set("currency", coin)
 	return c.queryResultToString("createVoucher", params)
 }
 
