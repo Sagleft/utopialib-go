@@ -124,6 +124,24 @@ func (c *UtopiaClient) apiQueryWithFilters(
 	return r, nil
 }
 
+func (c *UtopiaClient) retrieveStruct(
+	method string,
+	params uMap,
+	filters uMap,
+	resultPointer interface{},
+) error {
+	response, err := c.apiQueryWithFilters(method, params, filters)
+	if err != nil {
+		return err
+	}
+
+	return convertResult(response, resultPointer)
+}
+
+func (c *UtopiaClient) getSimpleStruct(method string, resultPointer interface{}) error {
+	return c.retrieveStruct(method, uMap{}, uMap{}, resultPointer)
+}
+
 func closeRequest(resp *http.Response) {
 	if resp != nil {
 		resp.Body.Close()

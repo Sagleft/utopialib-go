@@ -16,23 +16,24 @@ func NewUtopiaClient(data Config) *UtopiaClient {
 	}
 }
 
-// GetProfileStatus gets data about the status of the current account
-func (c *UtopiaClient) GetProfileStatus() (map[string]interface{}, error) {
-	return c.apiQuery("getProfileStatus", nil)
+func (c *UtopiaClient) GetProfileStatus() (structs.ProfileStatus, error) {
+	r := structs.ProfileStatus{}
+	err := c.getSimpleStruct("getProfileStatus", &r)
+	return r, err
 }
 
 // GetSystemInfo retrieves client system information
-func (c *UtopiaClient) GetSystemInfo() (map[string]interface{}, error) {
-	return c.apiQuery("getSystemInfo", nil)
+func (c *UtopiaClient) GetSystemInfo() (structs.SystemInfo, error) {
+	r := structs.SystemInfo{}
+	err := c.getSimpleStruct("getSystemInfo", &r)
+	return r, err
 }
 
-// SetProfileStatus updates data about the status of the current account
 func (c *UtopiaClient) SetProfileStatus(status string, mood string) error {
-	queryMap := make(map[string]interface{})
-	queryMap["status"] = status
-	queryMap["mood"] = mood
-
-	result, err := c.queryResultToBool("setProfileStatus", queryMap)
+	result, err := c.queryResultToBool("setProfileStatus", uMap{
+		"status": status,
+		"mood":   mood,
+	})
 	if err != nil {
 		return err
 	}

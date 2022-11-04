@@ -25,3 +25,5 @@ type query struct {
 	Params  map[string]interface{} `json:"params"`
 	Filters map[string]interface{} `json:"filter"`
 }
+
+type uMap map[string]interface{}
