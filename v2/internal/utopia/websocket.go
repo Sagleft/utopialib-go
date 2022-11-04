@@ -3,31 +3,9 @@ package utopia
 import (
 	"encoding/json"
 	"errors"
-
-	"github.com/ctengiz/evtwebsocket"
-
-	"github.com/Sagleft/utopialib-go/v2/pkg/websocket"
 )
 
-func (c *UtopiaClient) newWsHandler(task websocket.WsSubscribeTask) *wsHandler {
-	h := wsHandler{
-		WsURL: c.getWsURL(),
-		Conn:  evtwebsocket.Conn{},
-		Task:  task,
-	}
-
-	h.Conn.OnConnected = h.onConnected
-	h.Conn.OnMessage = h.onMessage
-	h.Conn.OnError = h.onError
-
-	if !task.DisablePing {
-		h.Conn.PingIntervalSecs = 5     // ping interval in seconds
-		h.Conn.PingMsg = []byte("PING") // ping message to send
-	}
-	return &h
-}
-
-// WsSubscribe - connect to websocket & recive messages.
+// WsSubscribe - connect to websocket & receive messages.
 // NOTE: it's blocking method
 func (c *UtopiaClient) WsSubscribe(task WsSubscribeTask) error {
 	return c.newWsHandler(task).connect()

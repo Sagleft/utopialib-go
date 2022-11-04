@@ -1,11 +1,8 @@
 package websocket
 
 import (
-	"encoding/json"
 	"errors"
 	"reflect"
-
-	"github.com/ctengiz/evtwebsocket"
 )
 
 // GetString - get string field from ws event.
@@ -86,39 +83,4 @@ func (ws *WsEvent) GetFloat(field string) (float64, error) {
 	}
 
 	return val, nil
-}
-
-func newEvent(jsonRaw []byte) (WsEvent, error) {
-	event := WsEvent{}
-	err := json.Unmarshal(jsonRaw, &event)
-	if err != nil {
-		return event, errors.New("failed to decode event json: " + err.Error())
-	}
-	return event, nil
-}
-
-// Fires when the connection is established
-func (h *wsHandler) onConnected(w *evtwebsocket.Conn) {
-	h.Task.OnConnected()
-}
-
-// Fires when a new message arrives from the server
-func (h *wsHandler) onMessage(msg []byte, w *evtwebsocket.Conn) {
-	event, err := newEvent(msg)
-	if err == nil {
-		go h.Task.Callback(event)
-	} else {
-		go h.Task.ErrCallback(err)
-	}
-}
-
-// Fires when an error occurs and connection is closed
-func (h *wsHandler) onError(err error) {
-	h.Task.ErrCallback(err)
-}
-
-// NOTE: it's blocking method
-func (h *wsHandler) connect() error {
-	// open connection
-	return h.Conn.Dial(h.WsURL, "")
 }
