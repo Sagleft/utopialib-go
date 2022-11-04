@@ -14,14 +14,14 @@ Install
 -----
 
 ```bash
-go get github.com/Sagleft/utopialib-go/v2
+go get github.com/Sagleft/utopialib-go
 ```
 
 then
 
 ```go
 import (
-	utopiago "github.com/Sagleft/utopialib-go/v2"
+	utopiago "github.com/Sagleft/utopialib-go"
 )
 ```
 
