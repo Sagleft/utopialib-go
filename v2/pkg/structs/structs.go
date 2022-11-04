@@ -29,7 +29,7 @@ type ContactData struct {
 	IsFriend   bool   `json:"isFriend"`
 	Nick       string `json:"nick"`
 	Pubkey     string `json:"pk"`
-	Status     int    `json:"status"` // 65536 - offline, 4096 - online, 4097 - away, 4099 - do not disturb, 32768 - invisible
+	Status     int    `json:"status"`
 }
 
 // ChannelContactData - channel contact data

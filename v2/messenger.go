@@ -1,13 +1,13 @@
 package utopiago
 
-import (
-	utopia "github.com/Sagleft/utopialib-go/v2/internal/utopia"
-)
+import "github.com/Sagleft/utopialib-go/v2/internal/utopia"
 
 type Client interface {
 	SetProfileStatus(status string, mood string) error
 }
 
-func NewUtopiaClient() Client {
-	return &utopia.UtopiaClient{}
+type Config = utopia.Config
+
+func NewUtopiaClient(c Config) Client {
+	return utopia.NewUtopiaClient(c)
 }

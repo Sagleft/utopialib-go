@@ -1,18 +1,21 @@
 package utopia
 
 type UtopiaClient struct {
-	// required, public
-	Protocol string `json:"protocol"`
-	Host     string `json:"host"`
-	Token    string `json:"token"`
-	Port     int    `json:"port"`
-
-	// optional, public
-	RequestTimeoutSeconds int `json:"timeout"`
-	WsPort                int `json:"wsport"`
-
-	// protected
+	data        Config
 	logCallback LogCallback
+}
+
+type Config struct {
+	// required
+	Host   string `json:"host"`
+	Token  string `json:"token"`
+	Port   int    `json:"port"`
+	WsPort int    `json:"wsport"`
+
+	// optional
+	Protocol              string      `json:"protocol"` // default: 127.0.0.1
+	RequestTimeoutSeconds int         `json:"timeout"`
+	Cb                    LogCallback `json:"-"`
 }
 
 // query is a filter for API requests

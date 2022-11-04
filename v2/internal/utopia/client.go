@@ -10,40 +10,10 @@ import (
 	"github.com/Sagleft/utopialib-go/v2/pkg/structs"
 )
 
-// NewClient - create client with default data:
-// http protocol, localhost, default port (20000)
-func NewClient(token string) *UtopiaClient {
+func NewUtopiaClient(data Config) *UtopiaClient {
 	return &UtopiaClient{
-		Protocol: "http",
-		Host:     "localhost",
-		Token:    token,
-		Port:     defaultPort,
-		WsPort:   defaultWsPort,
+		data: data,
 	}
-}
-
-func (c *UtopiaClient) SetToken(token string) *UtopiaClient {
-	c.Token = token
-	return c
-}
-
-func (c *UtopiaClient) SetProtocol(proto string) *UtopiaClient {
-	c.Protocol = proto
-	return c
-}
-
-func (c *UtopiaClient) SetPort(port int) *UtopiaClient {
-	c.Port = port
-	return c
-}
-
-func (c *UtopiaClient) SetWsPort(wsPort int) *UtopiaClient {
-	c.WsPort = wsPort
-	return c
-}
-
-func (c *UtopiaClient) SetLogsCallback(cb LogCallback) {
-	c.logCallback = cb
 }
 
 // GetProfileStatus gets data about the status of the current account
