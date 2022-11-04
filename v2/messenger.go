@@ -11,6 +11,18 @@ type Client interface {
 
 	// SetProfileStatus updates data about the status of the current account
 	SetProfileStatus(status string, mood string) error
+
+	// GetOwnContact asks for full details of the current account
+	GetOwnContact() (structs.OwnContactData, error)
+
+	// CheckClientConnection - checks if there are any errors when contacting the client
+	CheckClientConnection() bool
+
+	// UseVoucher - uses the voucher and returns an error on failure
+	UseVoucher(voucherID string) (string, error)
+
+	// GetFinanceInfo request financial info
+	GetFinanceInfo() (structs.FinanceInfo, error)
 }
 
 type Config = utopia.Config

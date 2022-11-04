@@ -1,7 +1,6 @@
 package utopia
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -43,55 +42,34 @@ func (c *UtopiaClient) SetProfileStatus(status string, mood string) error {
 	return nil
 }
 
-// GetOwnContact asks for full details of the current account
 func (c *UtopiaClient) GetOwnContact() (structs.OwnContactData, error) {
-	response, err := c.apiQuery("getOwnContact", nil)
-	if err != nil {
-		return structs.OwnContactData{}, err
-	}
-
-	// check result exists
-	result, isResultFound := response["result"]
-	if !isResultFound {
-		return structs.OwnContactData{}, errors.New("accaptable result doesn't exists in client response")
-	}
-
-	// convert result
-	jsonBytes, err := json.Marshal(result)
-	if err != nil {
-		return structs.OwnContactData{}, errors.New("failed to encode response result: " + err.Error())
-	}
-
-	ownContact := structs.OwnContactData{}
-	err = json.Unmarshal(jsonBytes, &ownContact)
-	if err != nil {
-		return structs.OwnContactData{}, errors.New("failed to decode reconverted result: " + err.Error())
-	}
-
-	return ownContact, nil
+	r := structs.OwnContactData{}
+	err := c.getSimpleStruct("getOwnContact", &r)
+	return r, err
 }
 
-// CheckClientConnection - checks if there are any errors when contacting the client
 func (c *UtopiaClient) CheckClientConnection() bool {
 	_, err := c.GetSystemInfo()
 	return err == nil
 }
 
-// UseVoucher - uses the voucher and returns an error on failure
 func (c *UtopiaClient) UseVoucher(voucherID string) (string, error) {
-	params := map[string]interface{}{
-		"voucherid": voucherID,
-	}
-	return c.queryResultToString("useVoucher", params)
+	return c.queryResultToString("useVoucher", uMap{"voucherid": voucherID})
+}
+
+func (c *UtopiaClient) GetFinanceInfo() (structs.FinanceInfo, error) {
+	r := structs.FinanceInfo{}
+	err := c.getSimpleStruct("getFinanceSystemInformation", &r)
+	return r, err
 }
 
 // GetFinanceHistory request the necessary financial statistics
 func (c *UtopiaClient) GetFinanceHistory(filters string, referenceNumber string) ([]interface{}, error) {
-	params := map[string]interface{}{
+	params := uMap{
 		"filters":         filters,
 		"referenceNumber": referenceNumber,
 	}
-	return c.queryResultToInterfaceArray("getFinanceSystemInformation", params)
+	return c.queryResultToInterfaceArray("getFinanceHistory", params)
 }
 
 // GetBalance request account Crypton balance
