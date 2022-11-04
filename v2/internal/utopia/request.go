@@ -1,4 +1,4 @@
-package utopiago
+package utopia
 
 import (
 	"bytes"
@@ -47,15 +47,15 @@ func (c *UtopiaClient) apiQuery2JSON(
 	}
 	defer l.handle(c.logCallback)
 
-	var query = Query{
+	var q = query{
 		Method: methodName,
 		Token:  c.Token,
 	}
 	if params != nil {
-		query.Params = params
+		q.Params = params
 	}
 
-	var jsonStr, err = json.Marshal(query)
+	var jsonStr, err = json.Marshal(q)
 	if err != nil {
 		return nil, l.useError(fmt.Errorf("failed to decode response json: %w", err))
 	}

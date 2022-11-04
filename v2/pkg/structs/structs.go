@@ -1,58 +1,10 @@
-package utopiago
-
-import (
-	"github.com/ctengiz/evtwebsocket"
-)
-
-// Query is a filter for API requests
-type Query struct {
-	Method  string                 `json:"method"`
-	Token   string                 `json:"token"`
-	Params  map[string]interface{} `json:"params"`
-	Filters map[string]interface{} `json:"filter"`
-}
-
-// UtopiaClient lets you connect to Utopia Client
-type UtopiaClient struct {
-	// protected
-	logCallback LogCallback
-
-	// required
-	Protocol string `json:"protocol"`
-	Host     string `json:"host"`
-	Token    string `json:"token"`
-	Port     int    `json:"port"`
-
-	// optional
-	RequestTimeoutSeconds int `json:"timeout"`
-	WsPort                int `json:"wsport"`
-}
-
-// WsEvent - websocket event from Utopia Client
-type WsEvent struct {
-	Type string                 `json:"type"`
-	Data map[string]interface{} `json:"data"`
-}
+package structs
 
 type SetWsStateTask struct {
 	Enabled       bool   `json:"enabled"`
 	Port          int    `json:"port"`
 	EnableSSL     bool   `json:"enablessl"`
 	Notifications string `json:"notifications"` // example: "contact, wallet" example2: "all"
-}
-
-type WsEventsCallback func(ws WsEvent)
-
-type WsErrorCallback func(err error)
-
-type WsSubscribeTask struct {
-	// required
-	OnConnected func()           // required
-	Callback    WsEventsCallback // required
-	ErrCallback WsErrorCallback  // required
-
-	// optional
-	DisablePing bool
 }
 
 // OwnContactData - own account data
@@ -129,12 +81,6 @@ type ChannelMessage struct {
 	Pubkey      string `json:"pk"`      // can be empty
 	Text        string `json:"text"`    // message text
 	TopicID     string `json:"topicId"` // for reply
-}
-
-type wsHandler struct {
-	WsURL string
-	Conn  evtwebsocket.Conn
-	Task  WsSubscribeTask
 }
 
 type ChannelData struct {

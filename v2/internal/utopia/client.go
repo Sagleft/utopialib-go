@@ -1,40 +1,14 @@
-package utopiago
+package utopia
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
+
+	"github.com/Sagleft/utopialib-go/v2/pkg/consts"
+	"github.com/Sagleft/utopialib-go/v2/pkg/structs"
 )
-
-const (
-	MaxCharactersInPaymentComment = 148
-	DefaultCurrencyTag            = "CRP"
-)
-
-const (
-	ChannelTypeRegistered ChannelType = iota
-	ChannelTypeRecent
-	ChannelTypeMy
-	ChannelTypeFriends
-	ChannelTypeBookmarked
-	ChannelTypeJoined
-	ChannelTypeOpened
-	ChannelTypeBlackList
-	ChannelTypeDeleted
-)
-
-const (
-	SortChannelsByCreated SortChannelsBy = iota + 1
-	SortChannelsByIsPrivate
-	SortChannelsByModified
-	SortChannelsByName
-	SortChannelsByDescription
-)
-
-type SortChannelsBy int
-
-type ChannelType int
 
 // NewClient - create client with default data:
 // http protocol, localhost, default port (20000)
@@ -43,8 +17,8 @@ func NewClient(token string) *UtopiaClient {
 		Protocol: "http",
 		Host:     "localhost",
 		Token:    token,
-		Port:     20000,
-		WsPort:   25000,
+		Port:     defaultPort,
+		WsPort:   defaultWsPort,
 	}
 }
 
@@ -99,28 +73,28 @@ func (c *UtopiaClient) SetProfileStatus(status string, mood string) error {
 }
 
 // GetOwnContact asks for full details of the current account
-func (c *UtopiaClient) GetOwnContact() (OwnContactData, error) {
+func (c *UtopiaClient) GetOwnContact() (structs.OwnContactData, error) {
 	response, err := c.apiQuery("getOwnContact", nil)
 	if err != nil {
-		return OwnContactData{}, err
+		return structs.OwnContactData{}, err
 	}
 
 	// check result exists
 	result, isResultFound := response["result"]
 	if !isResultFound {
-		return OwnContactData{}, errors.New("accaptable result doesn't exists in client response")
+		return structs.OwnContactData{}, errors.New("accaptable result doesn't exists in client response")
 	}
 
 	// convert result
 	jsonBytes, err := json.Marshal(result)
 	if err != nil {
-		return OwnContactData{}, errors.New("failed to encode response result: " + err.Error())
+		return structs.OwnContactData{}, errors.New("failed to encode response result: " + err.Error())
 	}
 
-	ownContact := OwnContactData{}
+	ownContact := structs.OwnContactData{}
 	err = json.Unmarshal(jsonBytes, &ownContact)
 	if err != nil {
-		return OwnContactData{}, errors.New("failed to decode reconverted result: " + err.Error())
+		return structs.OwnContactData{}, errors.New("failed to decode reconverted result: " + err.Error())
 	}
 
 	return ownContact, nil
@@ -196,7 +170,7 @@ func (c *UtopiaClient) CreateUUSDVoucher(amount float64) (string, error) {
 }
 
 // SetWebSocketState - set WSS Notification state
-func (c *UtopiaClient) SetWebSocketState(task SetWsStateTask) error {
+func (c *UtopiaClient) SetWebSocketState(task structs.SetWsStateTask) error {
 	params := map[string]interface{}{
 		"enabled": strconv.FormatBool(task.Enabled),
 		"port":    strconv.Itoa(task.Port),
@@ -326,7 +300,7 @@ func (c *UtopiaClient) SendInstantMessage(to string, message string) (int64, err
 
 // GetContacts - get account contacts.
 // params: filter - contact pubkey or nickname
-func (c *UtopiaClient) GetContacts(filter string) ([]ContactData, error) {
+func (c *UtopiaClient) GetContacts(filter string) ([]structs.ContactData, error) {
 	// send request
 	params := map[string]interface{}{}
 	if filter != "" {
@@ -337,7 +311,7 @@ func (c *UtopiaClient) GetContacts(filter string) ([]ContactData, error) {
 		return nil, err
 	}
 
-	data := []ContactData{}
+	data := []structs.ContactData{}
 	if err := convertResult(response, &data); err != nil {
 		return nil, err
 	}
@@ -345,41 +319,16 @@ func (c *UtopiaClient) GetContacts(filter string) ([]ContactData, error) {
 }
 
 // GetContact data
-func (c *UtopiaClient) GetContact(pubkeyOrNick string) (ContactData, error) {
+func (c *UtopiaClient) GetContact(pubkeyOrNick string) (structs.ContactData, error) {
 	contacts, err := c.GetContacts(pubkeyOrNick)
 	if err != nil {
-		return ContactData{}, err
+		return structs.ContactData{}, err
 	}
 
 	if len(contacts) == 0 {
-		return ContactData{}, errors.New("contact not found")
+		return structs.ContactData{}, errors.New("contact not found")
 	}
 	return contacts[0], nil
-}
-
-// IsOnline - is contact online?
-func (d *ContactData) IsOnline() bool {
-	return d.Status == 4096
-}
-
-// IsOffline - is contact offline?
-func (d *ContactData) IsOffline() bool {
-	return d.Status == 65536
-}
-
-// IsAway - is contact away?
-func (d *ContactData) IsAway() bool {
-	return d.Status == 4097
-}
-
-// IsDoNotDisturb - is contact marked to do not disturb mode?
-func (d *ContactData) IsDoNotDisturb() bool {
-	return d.Status == 4099
-}
-
-// IsInvisible - is contact invisible?
-func (d *ContactData) IsInvisible() bool {
-	return d.Status == 32768
 }
 
 // JoinChannel - join to channel or chat.
@@ -395,7 +344,7 @@ func (c *UtopiaClient) JoinChannel(channelID string, password ...string) (bool, 
 }
 
 // GetChannelContacts - get channel contacts
-func (c *UtopiaClient) GetChannelContacts(channelID string) ([]ChannelContactData, error) {
+func (c *UtopiaClient) GetChannelContacts(channelID string) ([]structs.ChannelContactData, error) {
 	// send request
 	params := map[string]interface{}{
 		"channelid": channelID,
@@ -405,7 +354,7 @@ func (c *UtopiaClient) GetChannelContacts(channelID string) ([]ChannelContactDat
 		return nil, err
 	}
 
-	data := []ChannelContactData{}
+	data := []structs.ChannelContactData{}
 	if err := convertResult(response, &data); err != nil {
 		return nil, err
 	}
@@ -431,7 +380,11 @@ func (c *UtopiaClient) RemoveChannelMessage(channelID string, messageID int64) e
 }
 
 // GetChannelMessages - get channel messages with filter (offset, max messages count)
-func (c *UtopiaClient) GetChannelMessages(channelID string, offset int, maxMessages int) ([]ChannelMessage, error) {
+func (c *UtopiaClient) GetChannelMessages(
+	channelID string,
+	offset int,
+	maxMessages int,
+) ([]structs.ChannelMessage, error) {
 	// send request
 	params := map[string]interface{}{
 		"channelid": channelID,
@@ -445,7 +398,7 @@ func (c *UtopiaClient) GetChannelMessages(channelID string, offset int, maxMessa
 		return nil, err
 	}
 
-	data := []ChannelMessage{}
+	data := []structs.ChannelMessage{}
 	if err := convertResult(response, &data); err != nil {
 		return nil, err
 	}
@@ -465,12 +418,12 @@ type SendPaymentTask struct {
 
 // SendPayment - send coins
 func (c *UtopiaClient) SendPayment(task SendPaymentTask) (string, error) {
-	if task.Comment != "" && len(task.Comment) > MaxCharactersInPaymentComment {
-		return "", fmt.Errorf("comment max length is %v characters", MaxCharactersInPaymentComment)
+	if task.Comment != "" && len(task.Comment) > maxCharactersInPaymentComment {
+		return "", fmt.Errorf("comment max length is %v characters", maxCharactersInPaymentComment)
 	}
 
 	if task.CurrencyTag == "" {
-		task.CurrencyTag = DefaultCurrencyTag
+		task.CurrencyTag = defaultCurrencyTag
 	}
 
 	params := map[string]interface{}{
@@ -484,18 +437,18 @@ func (c *UtopiaClient) SendPayment(task SendPaymentTask) (string, error) {
 }
 
 // GetChannelInfo - get specific channel info
-func (c *UtopiaClient) GetChannelInfo(channelID string) (ChannelData, error) {
+func (c *UtopiaClient) GetChannelInfo(channelID string) (structs.ChannelData, error) {
 	params := map[string]interface{}{
 		"channelid": channelID,
 	}
 	response, err := c.apiQuery("getChannelInfo", params)
 	if err != nil {
-		return ChannelData{}, err
+		return structs.ChannelData{}, err
 	}
 
-	data := ChannelData{}
+	data := structs.ChannelData{}
 	if err := convertResult(response, &data); err != nil {
-		return ChannelData{}, err
+		return structs.ChannelData{}, err
 	}
 
 	return data, nil
@@ -503,15 +456,15 @@ func (c *UtopiaClient) GetChannelInfo(channelID string) (ChannelData, error) {
 
 type GetChannelsTask struct {
 	// optional
-	SearchFilter string      // part of channel name or channel ID, etc
-	ChannelType  ChannelType // by default: 0 - registered
-	FromDate     string      // date example: 2019-11-23T10:00:00.001
+	SearchFilter string             // part of channel name or channel ID, etc
+	ChannelType  consts.ChannelType // by default: 0 - registered
+	FromDate     string             // date example: 2019-11-23T10:00:00.001
 	ToDate       string
-	SortBy       SortChannelsBy
+	SortBy       consts.SortChannelsBy
 }
 
 // GetChannels get available channels
-func (c *UtopiaClient) GetChannels(task GetChannelsTask) ([]SearchChannelData, error) {
+func (c *UtopiaClient) GetChannels(task GetChannelsTask) ([]structs.SearchChannelData, error) {
 	params := map[string]interface{}{
 		"filter":       task.SearchFilter,
 		"channel_type": task.ChannelType,
@@ -525,15 +478,15 @@ func (c *UtopiaClient) GetChannels(task GetChannelsTask) ([]SearchChannelData, e
 
 	filters := map[string]interface{}{}
 	switch task.SortBy {
-	case SortChannelsByCreated:
+	case consts.SortChannelsByCreated:
 		filters["sortBy"] = "created"
-	case SortChannelsByIsPrivate:
+	case consts.SortChannelsByIsPrivate:
 		filters["sortBy"] = "isprivate"
-	case SortChannelsByName:
+	case consts.SortChannelsByName:
 		filters["sortBy"] = "name"
-	case SortChannelsByModified:
+	case consts.SortChannelsByModified:
 		filters["sortBy"] = "modified"
-	case SortChannelsByDescription:
+	case consts.SortChannelsByDescription:
 		filters["sortBy"] = "description"
 	}
 
@@ -542,7 +495,7 @@ func (c *UtopiaClient) GetChannels(task GetChannelsTask) ([]SearchChannelData, e
 		return nil, err
 	}
 
-	data := []SearchChannelData{}
+	data := []structs.SearchChannelData{}
 	if err := convertResult(response, &data); err != nil {
 		return nil, err
 	}
