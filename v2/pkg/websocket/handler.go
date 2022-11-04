@@ -8,12 +8,14 @@ import (
 )
 
 type wsHandler struct {
+	url  string
 	conn evtwebsocket.Conn
 	task WsSubscribeTask
 }
 
-func NewWsHandler(task WsSubscribeTask) Handler {
+func NewWsHandler(URL string, task WsSubscribeTask) Handler {
 	h := &wsHandler{
+		url:  URL,
 		conn: evtwebsocket.Conn{},
 		task: task,
 	}
@@ -30,7 +32,7 @@ func NewWsHandler(task WsSubscribeTask) Handler {
 }
 
 func (h *wsHandler) Connect() error {
-	return h.conn.Dial(h.task.URL, "")
+	return h.conn.Dial(h.url, "")
 }
 
 func newEvent(jsonRaw []byte) (WsEvent, error) {

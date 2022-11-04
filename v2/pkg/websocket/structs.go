@@ -12,7 +12,6 @@ type WsErrorCallback func(err error)
 
 type WsSubscribeTask struct {
 	// required
-	URL         string
 	OnConnected func()           // required
 	Callback    WsEventsCallback // required
 	ErrCallback WsErrorCallback  // required
