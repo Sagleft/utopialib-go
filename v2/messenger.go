@@ -35,6 +35,15 @@ type Client interface {
 
 	// GetUUSDBalance request account UUSD balance
 	GetUUSDBalance() (float64, error)
+
+	// CreateVoucher requests the creation of a new Crypton voucher. it returns referenceNumber
+	CreateVoucher(amount float64) (string, error)
+
+	// CreateUUSDVoucher requests the creation of a new UUSD voucher. it returns referenceNumber
+	CreateUUSDVoucher(amount float64) (string, error)
+
+	// SetWebSocketState - set WSS Notification state
+	SetWebSocketState(task structs.SetWsStateTask) error
 }
 
 type Config = utopia.Config

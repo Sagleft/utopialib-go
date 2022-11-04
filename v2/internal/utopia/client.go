@@ -67,7 +67,7 @@ func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 	[]structs.FinanceHistoryData,
 	error,
 ) {
-	params := newMapBuilder().
+	params := uMap{}.
 		add(task.Currency, "", "currency").
 		add(task.Filters, "", "filters").
 		add(task.ReferenceNumber, "", "referenceNumber").
@@ -75,8 +75,7 @@ func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 		add(task.FromAmount, 0, "fromAmount").
 		add(task.ToAmount, 0, "toAmount").
 		add(task.SourcePubkey, "", "sourcePk").
-		add(task.DestinationPubkey, "", "destinationPk").
-		getMap()
+		add(task.DestinationPubkey, "", "destinationPk")
 
 	if !task.FromDate.IsZero() {
 		params["fromDate"] = task.FromDate.Format(defaultTimeLayout)
@@ -85,10 +84,9 @@ func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 		params["toDate"] = task.ToDate.Format(defaultTimeLayout)
 	}
 
-	filters := newMapBuilder().
+	filters := uMap{}.
 		add(task.QueryOffset, 0, "offset").
-		add(task.QueryLimitRows, 0, "limitRows").
-		getMap()
+		add(task.QueryLimitRows, 0, "limitRows")
 
 	r := []structs.FinanceHistoryData{}
 	err := c.retrieveStruct("getFinanceHistory", params, filters, &r)
@@ -108,27 +106,17 @@ func (c *UtopiaClient) createCoinVoucher(amount float64, coin string) (string, e
 		"amount":   amount,
 		"currency": coin,
 	}
-	result, err := c.queryResultToString("createVoucher", params)
-	if err != nil {
-		return "", err
-	}
-	if result == "" {
-		return "", errors.New("failed to create voucher, empty string in client response")
-	}
-	return result, nil
+	return c.queryResultToString("createVoucher", params)
 }
 
-// CreateVoucher requests the creation of a new Crypton voucher. it returns referenceNumber
 func (c *UtopiaClient) CreateVoucher(amount float64) (string, error) {
 	return c.createCoinVoucher(amount, "CRP")
 }
 
-// CreateUUSDVoucher requests the creation of a new UUSD voucher. it returns referenceNumber
 func (c *UtopiaClient) CreateUUSDVoucher(amount float64) (string, error) {
 	return c.createCoinVoucher(amount, "UUSD")
 }
 
-// SetWebSocketState - set WSS Notification state
 func (c *UtopiaClient) SetWebSocketState(task structs.SetWsStateTask) error {
 	params := uMap{
 		"enabled": strconv.FormatBool(task.Enabled),

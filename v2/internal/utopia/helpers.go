@@ -1,26 +1,14 @@
 package utopia
 
-type queryFieldsBuilder struct {
-	m map[string]interface{}
-}
+type uMap map[string]interface{}
 
-func newMapBuilder() *queryFieldsBuilder {
-	return &queryFieldsBuilder{
-		m: make(map[string]interface{}),
-	}
-}
-
-func (q *queryFieldsBuilder) getMap() map[string]interface{} {
-	return q.m
-}
-
-func (q *queryFieldsBuilder) add(
+func (u uMap) add(
 	value interface{},
 	unsetValue interface{},
 	fieldTag string,
-) *queryFieldsBuilder {
+) uMap {
 	if value != unsetValue {
-		q.m[fieldTag] = value
+		u[fieldTag] = value
 	}
-	return q
+	return u
 }
