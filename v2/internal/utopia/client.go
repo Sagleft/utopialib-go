@@ -68,14 +68,14 @@ func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 	error,
 ) {
 	params := uMap{}.
-		add("currency", task.Currency, "").
-		add("filters", task.Filters, "").
-		add("referenceNumber", task.ReferenceNumber, "").
-		add("batchId", task.BatchID, 0).
-		add("fromAmount", task.FromAmount, 0).
-		add("toAmount", task.ToAmount, 0).
-		add("sourcePk", task.SourcePubkey, "").
-		add("destinationPk", task.DestinationPubkey, "")
+		add("currency", task.Currency).
+		add("filters", task.Filters).
+		add("referenceNumber", task.ReferenceNumber).
+		add("batchId", task.BatchID).
+		add("fromAmount", task.FromAmount).
+		add("toAmount", task.ToAmount).
+		add("sourcePk", task.SourcePubkey).
+		add("destinationPk", task.DestinationPubkey)
 
 	if !task.FromDate.IsZero() {
 		params["fromDate"] = task.FromDate.Format(defaultTimeLayout)
@@ -85,8 +85,8 @@ func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 	}
 
 	filters := uMap{}.
-		add("offset", task.QueryOffset, 0).
-		add("limitRows", task.QueryLimitRows, 0)
+		add("offset", task.QueryOffset).
+		add("limitRows", task.QueryLimitRows)
 
 	r := []structs.FinanceHistoryData{}
 	err := c.retrieveStruct("getFinanceHistory", params, filters, &r)

@@ -1,13 +1,13 @@
 package utopia
 
+import (
+	"reflect"
+)
+
 type uMap map[string]interface{}
 
-func (u uMap) add(
-	fieldTag string,
-	value interface{},
-	unsetValue interface{},
-) uMap {
-	if value != unsetValue {
+func (u uMap) add(fieldTag string, value any) uMap {
+	if !reflect.ValueOf(value).IsZero() {
 		u[fieldTag] = value
 	}
 	return u
