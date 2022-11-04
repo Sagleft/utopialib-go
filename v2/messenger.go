@@ -32,6 +32,9 @@ type Client interface {
 
 	// GetBalance request account Crypton balance
 	GetBalance() (float64, error)
+
+	// GetUUSDBalance request account UUSD balance
+	GetUUSDBalance() (float64, error)
 }
 
 type Config = utopia.Config

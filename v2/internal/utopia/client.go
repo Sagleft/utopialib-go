@@ -99,16 +99,8 @@ func (c *UtopiaClient) GetBalance() (float64, error) {
 	return c.queryResultToFloat64("getBalance", uMap{})
 }
 
-// GetUUSDBalance request account UUSD balance
 func (c *UtopiaClient) GetUUSDBalance() (float64, error) {
-	params := uMap{
-		"currency": "USD",
-	}
-	result, err := c.queryResultToFloat64("getBalance", params)
-	if err != nil {
-		return 0, err
-	}
-	return result, nil
+	return c.queryResultToFloat64("getBalance", uMap{"currency": "USD"})
 }
 
 func (c *UtopiaClient) createCoinVoucher(amount float64, coin string) (string, error) {
