@@ -42,8 +42,84 @@ type Client interface {
 	// CreateUUSDVoucher requests the creation of a new UUSD voucher. it returns referenceNumber
 	CreateUUSDVoucher(amount float64) (string, error)
 
+	// GetWebSocketState - returns WSS Notifications state.
+	// 0 - disabled or active listening port number
+	GetWebSocketState() (int64, error)
+
 	// SetWebSocketState - set WSS Notification state
 	SetWebSocketState(task structs.SetWsStateTask) error
+
+	// SendChannelMessage - send channel message & get message ID
+	SendChannelMessage(channelID, message string) (string, error)
+
+	// SendChannelContactMessage - send channel message to contact in private mode
+	SendChannelContactMessage(channelID, contactPubkeyHash, message string) (string, error)
+
+	// SendChannelPicture - send channel picture & get message ID
+	SendChannelPicture(channelID, base64Image, comment, filenameForImage string) (string, error)
+
+	// GetStickerNamesByCollection returns available names from corresponded collection
+	GetStickerNamesByCollection(collectionName string) ([]string, error)
+
+	// GetStickerImage returns sticker image in base64
+	GetStickerImage(collectionName, stickerName string) (string, error)
+
+	// UCodeEncode - encode data to uCode image.
+	// coder: BASE64 for example
+	// format: JPG or PNG
+	UCodeEncode(dataHexCode, coder, format string, imageSize int) (string, error)
+
+	// SendAuthRequest - send auth request to user
+	SendAuthRequest(pubkey, message string) (bool, error)
+
+	// AcceptAuthRequest - accept auth request
+	AcceptAuthRequest(pubkey, message string) (bool, error)
+
+	// RejectAuthRequest - reject user auth request
+	RejectAuthRequest(pubkey, message string) (bool, error)
+
+	// SendInstantMessage - send message to contact (PM).
+	// to - pubkey or uNS entry name
+	SendInstantMessage(to string, message string) (int64, error)
+
+	// GetContacts - get account contacts.
+	// params: filter - contact pubkey or nickname
+	GetContacts(filter string) ([]structs.ContactData, error)
+
+	// GetContact data
+	GetContact(pubkeyOrNick string) (structs.ContactData, error)
+
+	// JoinChannel - join to channel or chat.
+	// password is optional. returns join status (bool) and error
+	JoinChannel(channelID string, password ...string) (bool, error)
+
+	// GetChannelContacts - get channel contacts
+	GetChannelContacts(channelID string) ([]structs.ChannelContactData, error)
+
+	// EnableChannelReadOnly - toogle channel readonly mode
+	EnableChannelReadOnly(channelID string, readOnly bool) error
+
+	// RemoveChannelMessage - remove channel message
+	RemoveChannelMessage(channelID string, messageID int64) error
+
+	// GetChannelMessages - get channel messages with filter (offset, max messages count)
+	GetChannelMessages(
+		channelID string,
+		offset int,
+		maxMessages int,
+	) ([]structs.ChannelMessage, error)
+
+	// SendPayment - send coins
+	SendPayment(task structs.SendPaymentTask) (string, error)
+
+	// GetChannelInfo - get specific channel info
+	GetChannelInfo(channelID string) (structs.ChannelData, error)
+
+	// GetChannels get available channels
+	GetChannels(task structs.GetChannelsTask) ([]structs.SearchChannelData, error)
+
+	// ToogleChannelNotifications - enable or disable channel notifications
+	ToogleChannelNotifications(channelID string, enabled bool) error
 }
 
 type Config = utopia.Config

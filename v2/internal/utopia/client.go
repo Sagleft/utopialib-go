@@ -136,7 +136,6 @@ func (c *UtopiaClient) SetWebSocketState(task structs.SetWsStateTask) error {
 	return nil
 }
 
-// GetWebSocketState - returns WSS Notifications state, 0 - disabled or active listening port number.
 func (c *UtopiaClient) GetWebSocketState() (int64, error) {
 	result, err := c.queryResultToInt("getWebSocketState", nil)
 	if err != nil {
@@ -145,7 +144,6 @@ func (c *UtopiaClient) GetWebSocketState() (int64, error) {
 	return result, nil
 }
 
-// SendChannelMessage - send channel message & get message ID
 func (c *UtopiaClient) SendChannelMessage(channelID, message string) (string, error) {
 	params := uMap{
 		"channelid": channelID,
@@ -154,7 +152,6 @@ func (c *UtopiaClient) SendChannelMessage(channelID, message string) (string, er
 	return c.queryResultToString("sendChannelMessage", params)
 }
 
-// SendChannelContactMessage - send channel message to contact in private mode
 func (c *UtopiaClient) SendChannelContactMessage(channelID, contactPubkeyHash, message string) (string, error) {
 	params := uMap{
 		"channelid":       channelID,
@@ -164,7 +161,6 @@ func (c *UtopiaClient) SendChannelContactMessage(channelID, contactPubkeyHash, m
 	return c.queryResultToString("sendChannelPrivateMessageToContact", params)
 }
 
-// SendChannelPicture - send channel picture & get message ID
 func (c *UtopiaClient) SendChannelPicture(channelID, base64Image, comment, filenameForImage string) (string, error) {
 	params := uMap{
 		"channelid":      channelID,
@@ -175,7 +171,6 @@ func (c *UtopiaClient) SendChannelPicture(channelID, base64Image, comment, filen
 	return c.queryResultToString("sendChannelPicture", params)
 }
 
-// GetStickerNamesByCollection returns available names from corresponded collection
 func (c *UtopiaClient) GetStickerNamesByCollection(collectionName string) ([]string, error) {
 	params := uMap{
 		"collection_name": collectionName,
@@ -183,7 +178,6 @@ func (c *UtopiaClient) GetStickerNamesByCollection(collectionName string) ([]str
 	return c.queryResultToStringsArray("getStickerNamesByCollection", params)
 }
 
-// GetStickerImage returns sticker image in base64
 func (c *UtopiaClient) GetStickerImage(collectionName, stickerName string) (string, error) {
 	params := uMap{
 		"collection_name": collectionName,
@@ -193,9 +187,6 @@ func (c *UtopiaClient) GetStickerImage(collectionName, stickerName string) (stri
 	return c.queryResultToString("getImageSticker", params)
 }
 
-// UCodeEncode - encode data to uCode image.
-// coder: BASE64 for example
-// format: JPG or PNG
 func (c *UtopiaClient) UCodeEncode(dataHexCode, coder, format string, imageSize int) (string, error) {
 	return c.queryResultToString("ucodeEncode", uMap{
 		"hex_code":   dataHexCode,
@@ -205,7 +196,6 @@ func (c *UtopiaClient) UCodeEncode(dataHexCode, coder, format string, imageSize 
 	})
 }
 
-// SendAuthRequest - send auth request to user
 func (c *UtopiaClient) SendAuthRequest(pubkey, message string) (bool, error) {
 	params := uMap{
 		"pk":      pubkey,
@@ -214,7 +204,6 @@ func (c *UtopiaClient) SendAuthRequest(pubkey, message string) (bool, error) {
 	return c.queryResultToBool("sendAuthorizationRequest", params)
 }
 
-// AcceptAuthRequest - accept auth request
 func (c *UtopiaClient) AcceptAuthRequest(pubkey, message string) (bool, error) {
 	params := uMap{
 		"pk":      pubkey,
@@ -223,7 +212,6 @@ func (c *UtopiaClient) AcceptAuthRequest(pubkey, message string) (bool, error) {
 	return c.queryResultToBool("acceptAuthorizationRequest", params)
 }
 
-// RejectAuthRequest - reject user auth request
 func (c *UtopiaClient) RejectAuthRequest(pubkey, message string) (bool, error) {
 	params := uMap{
 		"pk":      pubkey,
@@ -232,8 +220,6 @@ func (c *UtopiaClient) RejectAuthRequest(pubkey, message string) (bool, error) {
 	return c.queryResultToBool("rejectAuthorizationRequest", params)
 }
 
-// SendInstantMessage - send message to contact (PM).
-// to -- pubkey or uNS entry name
 func (c *UtopiaClient) SendInstantMessage(to string, message string) (int64, error) {
 	params := uMap{
 		"to":   to,
@@ -242,14 +228,9 @@ func (c *UtopiaClient) SendInstantMessage(to string, message string) (int64, err
 	return c.queryResultToInt("sendInstantMessage", params)
 }
 
-// GetContacts - get account contacts.
-// params: filter - contact pubkey or nickname
 func (c *UtopiaClient) GetContacts(filter string) ([]structs.ContactData, error) {
 	// send request
-	params := uMap{}
-	if filter != "" {
-		params["filter"] = filter
-	}
+	params := uMap{}.add("filter", filter)
 	response, err := c.apiQuery("getContacts", params)
 	if err != nil {
 		return nil, err
@@ -262,7 +243,6 @@ func (c *UtopiaClient) GetContacts(filter string) ([]structs.ContactData, error)
 	return data, nil
 }
 
-// GetContact data
 func (c *UtopiaClient) GetContact(pubkeyOrNick string) (structs.ContactData, error) {
 	contacts, err := c.GetContacts(pubkeyOrNick)
 	if err != nil {
@@ -275,8 +255,6 @@ func (c *UtopiaClient) GetContact(pubkeyOrNick string) (structs.ContactData, err
 	return contacts[0], nil
 }
 
-// JoinChannel - join to channel or chat.
-// password is optional. returns join status (bool) and error
 func (c *UtopiaClient) JoinChannel(channelID string, password ...string) (bool, error) {
 	params := uMap{
 		"ident": channelID,
@@ -287,12 +265,8 @@ func (c *UtopiaClient) JoinChannel(channelID string, password ...string) (bool, 
 	return c.queryResultToBool("joinChannel", params)
 }
 
-// GetChannelContacts - get channel contacts
 func (c *UtopiaClient) GetChannelContacts(channelID string) ([]structs.ChannelContactData, error) {
-	// send request
-	params := uMap{
-		"channelid": channelID,
-	}
+	params := uMap{"channelid": channelID}
 	response, err := c.apiQuery("getChannelContacts", params)
 	if err != nil {
 		return nil, err
@@ -305,7 +279,7 @@ func (c *UtopiaClient) GetChannelContacts(channelID string) ([]structs.ChannelCo
 	return data, nil
 }
 
-func (c *UtopiaClient) EnableReadOnly(channelID string, readOnly bool) error {
+func (c *UtopiaClient) EnableChannelReadOnly(channelID string, readOnly bool) error {
 	_, err := c.queryResultToBool("modifyChannel", uMap{
 		"channelid": channelID,
 		"read_only": readOnly,
@@ -313,7 +287,6 @@ func (c *UtopiaClient) EnableReadOnly(channelID string, readOnly bool) error {
 	return err
 }
 
-// RemoveChannelMessage - remove channel message
 func (c *UtopiaClient) RemoveChannelMessage(channelID string, messageID int64) error {
 	params := uMap{
 		"channelid":  channelID,
@@ -323,16 +296,12 @@ func (c *UtopiaClient) RemoveChannelMessage(channelID string, messageID int64) e
 	return err
 }
 
-// GetChannelMessages - get channel messages with filter (offset, max messages count)
 func (c *UtopiaClient) GetChannelMessages(
 	channelID string,
 	offset int,
 	maxMessages int,
 ) ([]structs.ChannelMessage, error) {
-	// send request
-	params := uMap{
-		"channelid": channelID,
-	}
+	params := uMap{"channelid": channelID}
 	filters := uMap{
 		"offset": offset,
 		"limit":  maxMessages,
@@ -349,19 +318,7 @@ func (c *UtopiaClient) GetChannelMessages(
 	return data, nil
 }
 
-type SendPaymentTask struct {
-	// required
-	To     string  `json:"to"`     // pubkey, nickname or card ID
-	Amount float64 `json:"amount"` // more than zero, no more than 9 decimal places
-
-	// optional
-	CurrencyTag string `json:"currency"`   // example: "CRP", "UUSD". by default: "CRP"
-	FromCardID  string `json:"fromCardID"` // specify here your card ID
-	Comment     string `json:"comment"`
-}
-
-// SendPayment - send coins
-func (c *UtopiaClient) SendPayment(task SendPaymentTask) (string, error) {
+func (c *UtopiaClient) SendPayment(task structs.SendPaymentTask) (string, error) {
 	if task.Comment != "" && len(task.Comment) > maxCharactersInPaymentComment {
 		return "", fmt.Errorf("comment max length is %v characters", maxCharactersInPaymentComment)
 	}
@@ -380,7 +337,6 @@ func (c *UtopiaClient) SendPayment(task SendPaymentTask) (string, error) {
 	return c.queryResultToString("sendPayment", params)
 }
 
-// GetChannelInfo - get specific channel info
 func (c *UtopiaClient) GetChannelInfo(channelID string) (structs.ChannelData, error) {
 	params := uMap{
 		"channelid": channelID,
@@ -398,26 +354,16 @@ func (c *UtopiaClient) GetChannelInfo(channelID string) (structs.ChannelData, er
 	return data, nil
 }
 
-type GetChannelsTask struct {
-	// optional
-	SearchFilter string             // part of channel name or channel ID, etc
-	ChannelType  consts.ChannelType // by default: 0 - registered
-	FromDate     string             // date example: 2019-11-23T10:00:00.001
-	ToDate       string
-	SortBy       consts.SortChannelsBy
-}
-
-// GetChannels get available channels
-func (c *UtopiaClient) GetChannels(task GetChannelsTask) ([]structs.SearchChannelData, error) {
+func (c *UtopiaClient) GetChannels(task structs.GetChannelsTask) ([]structs.SearchChannelData, error) {
 	params := uMap{
 		"filter":       task.SearchFilter,
 		"channel_type": task.ChannelType,
 	}
-	if task.FromDate != "" {
-		params["from"] = task.FromDate
+	if !task.FromDate.IsZero() {
+		params["from"] = task.FromDate.Format(defaultTimeLayout)
 	}
-	if task.ToDate != "" {
-		params["to"] = task.ToDate
+	if !task.ToDate.IsZero() {
+		params["to"] = task.ToDate.Format(defaultTimeLayout)
 	}
 
 	filters := uMap{}

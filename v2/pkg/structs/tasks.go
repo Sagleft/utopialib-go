@@ -1,6 +1,10 @@
 package structs
 
-import "time"
+import (
+	"time"
+
+	"github.com/Sagleft/utopialib-go/v2/pkg/consts"
+)
 
 type GetFinanceHistoryTask struct {
 	// optional
@@ -16,4 +20,24 @@ type GetFinanceHistoryTask struct {
 	DestinationPubkey string    `json:"destinationPk"`
 	QueryOffset       uint      `json:"offset"`
 	QueryLimitRows    uint      `json:"limitRows"`
+}
+
+type SendPaymentTask struct {
+	// required
+	To     string  `json:"to"`     // pubkey, nickname or card ID
+	Amount float64 `json:"amount"` // more than zero, no more than 9 decimal places
+
+	// optional
+	CurrencyTag string `json:"currency"`   // example: "CRP", "UUSD". by default: "CRP"
+	FromCardID  string `json:"fromCardID"` // specify here your card ID
+	Comment     string `json:"comment"`
+}
+
+type GetChannelsTask struct {
+	// optional
+	SearchFilter string             // part of channel name or channel ID, etc
+	ChannelType  consts.ChannelType // by default: 0 - registered
+	FromDate     time.Time
+	ToDate       time.Time
+	SortBy       consts.SortChannelsBy
 }
