@@ -63,7 +63,6 @@ func (c *UtopiaClient) GetFinanceInfo() (structs.FinanceInfo, error) {
 	return r, err
 }
 
-// GetFinanceHistory request the necessary financial statistics
 func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 	[]structs.FinanceHistoryData,
 	error,
@@ -96,13 +95,8 @@ func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 	return r, err
 }
 
-// GetBalance request account Crypton balance
 func (c *UtopiaClient) GetBalance() (float64, error) {
-	result, err := c.queryResultToFloat64("getBalance", map[string]interface{}{})
-	if err != nil {
-		return 0, err
-	}
-	return result, nil
+	return c.queryResultToFloat64("getBalance", uMap{})
 }
 
 // GetUUSDBalance request account UUSD balance
@@ -275,7 +269,7 @@ func (c *UtopiaClient) SendInstantMessage(to string, message string) (int64, err
 // params: filter - contact pubkey or nickname
 func (c *UtopiaClient) GetContacts(filter string) ([]structs.ContactData, error) {
 	// send request
-	params := map[string]interface{}{}
+	params := uMap{}
 	if filter != "" {
 		params["filter"] = filter
 	}
@@ -449,7 +443,7 @@ func (c *UtopiaClient) GetChannels(task GetChannelsTask) ([]structs.SearchChanne
 		params["to"] = task.ToDate
 	}
 
-	filters := map[string]interface{}{}
+	filters := uMap{}
 	switch task.SortBy {
 	case consts.SortChannelsByCreated:
 		filters["sortBy"] = "created"

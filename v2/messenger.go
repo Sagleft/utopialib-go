@@ -23,6 +23,15 @@ type Client interface {
 
 	// GetFinanceInfo request financial info
 	GetFinanceInfo() (structs.FinanceInfo, error)
+
+	// GetFinanceHistory request the necessary financial statistics
+	GetFinanceHistory(task structs.GetFinanceHistoryTask) (
+		[]structs.FinanceHistoryData,
+		error,
+	)
+
+	// GetBalance request account Crypton balance
+	GetBalance() (float64, error)
 }
 
 type Config = utopia.Config
