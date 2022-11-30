@@ -41,6 +41,8 @@ func (c *UtopiaClient) apiQuery2JSON(
 	timeout time.Duration,
 ) ([]byte, error) {
 
+	c.limitRate(methodName)
+
 	l := logData{
 		TimeCreated: time.Now(),
 		Timestamp:   time.Now().UnixMilli(),

@@ -7,29 +7,47 @@ import (
 
 	"github.com/Sagleft/utopialib-go/v2/pkg/consts"
 	"github.com/Sagleft/utopialib-go/v2/pkg/structs"
+	"github.com/beefsack/go-rate"
 )
 
 func NewUtopiaClient(data Config) *UtopiaClient {
 	return &UtopiaClient{
-		data: data,
+		data:     data,
+		limiters: getRateLimiters(),
 	}
+}
+
+func getRateLimiters() rateLimiters {
+	return rateLimiters{
+		reqDefault: rate.New(1, defaultReqRateLimitTimeout),
+	}
+}
+
+func (c *UtopiaClient) limitRate(method string) {
+	limiter, isExists := c.limiters[method]
+	if !isExists {
+		c.limiters[reqDefault].Wait()
+		return
+	}
+
+	limiter.Wait()
 }
 
 func (c *UtopiaClient) GetProfileStatus() (structs.ProfileStatus, error) {
 	r := structs.ProfileStatus{}
-	err := c.getSimpleStruct("getProfileStatus", &r)
+	err := c.getSimpleStruct(reqGetProfileStatus, &r)
 	return r, err
 }
 
 // GetSystemInfo retrieves client system information
 func (c *UtopiaClient) GetSystemInfo() (structs.SystemInfo, error) {
 	r := structs.SystemInfo{}
-	err := c.getSimpleStruct("getSystemInfo", &r)
+	err := c.getSimpleStruct(reqGetSystemInfo, &r)
 	return r, err
 }
 
 func (c *UtopiaClient) SetProfileStatus(status string, mood string) error {
-	result, err := c.queryResultToBool("setProfileStatus", uMap{
+	result, err := c.queryResultToBool(reqSetProfileStatus, uMap{
 		"status": status,
 		"mood":   mood,
 	})
@@ -44,7 +62,7 @@ func (c *UtopiaClient) SetProfileStatus(status string, mood string) error {
 
 func (c *UtopiaClient) GetOwnContact() (structs.OwnContactData, error) {
 	r := structs.OwnContactData{}
-	err := c.getSimpleStruct("getOwnContact", &r)
+	err := c.getSimpleStruct(reqGetOwnContact, &r)
 	return r, err
 }
 
@@ -54,12 +72,12 @@ func (c *UtopiaClient) CheckClientConnection() bool {
 }
 
 func (c *UtopiaClient) UseVoucher(voucherID string) (string, error) {
-	return c.queryResultToString("useVoucher", uMap{"voucherid": voucherID})
+	return c.queryResultToString(reqUseVoucher, uMap{"voucherid": voucherID})
 }
 
 func (c *UtopiaClient) GetFinanceInfo() (structs.FinanceInfo, error) {
 	r := structs.FinanceInfo{}
-	err := c.getSimpleStruct("getFinanceSystemInformation", &r)
+	err := c.getSimpleStruct(reqGetFinanceSystemInformation, &r)
 	return r, err
 }
 
@@ -89,7 +107,7 @@ func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 		add("limitRows", task.QueryLimitRows)
 
 	r := []structs.FinanceHistoryData{}
-	err := c.retrieveStruct("getFinanceHistory", params, filters, &r)
+	err := c.retrieveStruct("", params, filters, &r)
 	return r, err
 }
 
@@ -403,4 +421,19 @@ func (c *UtopiaClient) ToogleChannelNotifications(channelID string, enabled bool
 		return err
 	}
 	return nil
+}
+
+// GetNetworkConnections - get current network peers
+func (c *UtopiaClient) GetNetworkConnections(channelID string) ([]PeerInfo, error) {
+	response, err := c.apiQuery("getNetworkConnections", map[string]interface{}{})
+	if err != nil {
+		return nil, err
+	}
+
+	data := []PeerInfo{}
+	if err := convertResult(response, &data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }

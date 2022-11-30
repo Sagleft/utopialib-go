@@ -1,9 +1,14 @@
 package utopia
 
+import "github.com/beefsack/go-rate"
+
 type UtopiaClient struct {
 	data        Config
 	logCallback LogCallback
+	limiters    rateLimiters
 }
+
+type rateLimiters map[string]*rate.RateLimiter
 
 type Config struct {
 	// required
@@ -24,4 +29,9 @@ type query struct {
 	Token   string                 `json:"token"`
 	Params  map[string]interface{} `json:"params"`
 	Filters map[string]interface{} `json:"filter"`
+}
+
+type PeerInfo struct {
+	Direction int    `json:"direction"`
+	Address   string `json:"remoteAddress"`
 }

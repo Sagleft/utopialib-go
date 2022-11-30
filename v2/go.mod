@@ -3,6 +3,7 @@ module github.com/Sagleft/utopialib-go/v2
 go 1.18
 
 require (
+	github.com/beefsack/go-rate v0.0.0-20220214233405-116f4ca011a0
 	github.com/ctengiz/evtwebsocket v0.0.0-20180717104640-fc3583982591
 	github.com/stretchr/testify v1.8.1
 	gopkg.in/grignaak/tribool.v1 v1.0.0-20150312065122-d6bb19d816df
