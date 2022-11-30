@@ -9,7 +9,7 @@ const (
 	defaultWsPort                 = 25000
 	defaultHost                   = "127.0.0.1"
 	defaultTimeLayout             = time.RFC3339
-	defaultReqRateLimitTimeout    = time.Second * 2
+	defaultRequestsPerSecond      = 5
 
 	reqDefault                     = "default"
 	reqGetProfileStatus            = "getProfileStatus"
@@ -19,4 +19,17 @@ const (
 	reqUseVoucher                  = "useVoucher"
 	reqGetFinanceSystemInformation = "getFinanceSystemInformation"
 	reqGetFinanceHistory           = "getFinanceHistory"
+	reqGetChannels                 = "getChannels"
+	reqGetChannelInfo              = "getChannelInfo"
+	reqJoinChannel                 = "joinChannel"
+	reqGetBalance                  = "getBalance"
+	reqCreateVoucher               = "createVoucher"
+	reqSetWebSocketState           = "setWebSocketState"
+	reqGetWebSocketState           = "getWebSocketState"
+	reqSendChannelMessage          = "sendChannelMessage"
+	reqSendPrivateChannelMessage   = "sendChannelPrivateMessageToContact"
+	reqSendChannelPicture          = "sendChannelPicture"
+	reqGetStickerNamesByCollection = "getStickerNamesByCollection"
+	reqGetImageSticker             = "getImageSticker"
+	reqUcodeEncode                 = "ucodeEncode"
 )

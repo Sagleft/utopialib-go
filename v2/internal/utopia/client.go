@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/Sagleft/utopialib-go/v2/pkg/consts"
 	"github.com/Sagleft/utopialib-go/v2/pkg/structs"
@@ -19,7 +20,7 @@ func NewUtopiaClient(data Config) *UtopiaClient {
 
 func getRateLimiters() rateLimiters {
 	return rateLimiters{
-		reqDefault: rate.New(1, defaultReqRateLimitTimeout),
+		reqDefault: rate.New(defaultRequestsPerSecond, time.Second),
 	}
 }
 
@@ -112,16 +113,16 @@ func (c *UtopiaClient) GetFinanceHistory(task structs.GetFinanceHistoryTask) (
 }
 
 func (c *UtopiaClient) GetBalance() (float64, error) {
-	return c.queryResultToFloat64("getBalance", uMap{})
+	return c.queryResultToFloat64(reqGetBalance, uMap{})
 }
 
 func (c *UtopiaClient) GetUUSDBalance() (float64, error) {
-	return c.queryResultToFloat64("getBalance", uMap{"currency": "USD"})
+	return c.queryResultToFloat64(reqGetBalance, uMap{"currency": "USD"})
 }
 
 func (c *UtopiaClient) createCoinVoucher(amount float64, coin string) (string, error) {
 	params := uMap{}.set("amount", amount).set("currency", coin)
-	return c.queryResultToString("createVoucher", params)
+	return c.queryResultToString(reqCreateVoucher, params)
 }
 
 func (c *UtopiaClient) CreateVoucher(amount float64) (string, error) {
@@ -144,7 +145,7 @@ func (c *UtopiaClient) SetWebSocketState(task structs.SetWsStateTask) error {
 		params["notifications"] = task.Notifications
 	}
 
-	result, err := c.queryResultToString("setWebSocketState", params)
+	result, err := c.queryResultToString(reqSetWebSocketState, params)
 	if err != nil {
 		return err
 	}
@@ -155,7 +156,7 @@ func (c *UtopiaClient) SetWebSocketState(task structs.SetWsStateTask) error {
 }
 
 func (c *UtopiaClient) GetWebSocketState() (int64, error) {
-	result, err := c.queryResultToInt("getWebSocketState", nil)
+	result, err := c.queryResultToInt(reqGetWebSocketState, nil)
 	if err != nil {
 		return 0, err
 	}
@@ -167,7 +168,7 @@ func (c *UtopiaClient) SendChannelMessage(channelID, message string) (string, er
 		"channelid": channelID,
 		"message":   message,
 	}
-	return c.queryResultToString("sendChannelMessage", params)
+	return c.queryResultToString(reqSendChannelMessage, params)
 }
 
 func (c *UtopiaClient) SendChannelContactMessage(channelID, contactPubkeyHash, message string) (string, error) {
@@ -176,7 +177,7 @@ func (c *UtopiaClient) SendChannelContactMessage(channelID, contactPubkeyHash, m
 		"contactHashedPk": contactPubkeyHash,
 		"message":         message,
 	}
-	return c.queryResultToString("sendChannelPrivateMessageToContact", params)
+	return c.queryResultToString(reqSendPrivateChannelMessage, params)
 }
 
 func (c *UtopiaClient) SendChannelPicture(channelID, base64Image, comment, filenameForImage string) (string, error) {
@@ -186,14 +187,14 @@ func (c *UtopiaClient) SendChannelPicture(channelID, base64Image, comment, filen
 		"comment":        comment,
 		"filename_image": filenameForImage,
 	}
-	return c.queryResultToString("sendChannelPicture", params)
+	return c.queryResultToString(reqSendChannelPicture, params)
 }
 
 func (c *UtopiaClient) GetStickerNamesByCollection(collectionName string) ([]string, error) {
 	params := uMap{
 		"collection_name": collectionName,
 	}
-	return c.queryResultToStringsArray("getStickerNamesByCollection", params)
+	return c.queryResultToStringsArray(reqGetStickerNamesByCollection, params)
 }
 
 func (c *UtopiaClient) GetStickerImage(collectionName, stickerName string) (string, error) {
@@ -202,11 +203,11 @@ func (c *UtopiaClient) GetStickerImage(collectionName, stickerName string) (stri
 		"sticker_name":    stickerName,
 		"coder":           "BASE64",
 	}
-	return c.queryResultToString("getImageSticker", params)
+	return c.queryResultToString(reqGetImageSticker, params)
 }
 
 func (c *UtopiaClient) UCodeEncode(dataHexCode, coder, format string, imageSize int) (string, error) {
-	return c.queryResultToString("ucodeEncode", uMap{
+	return c.queryResultToString(reqUcodeEncode, uMap{
 		"hex_code":   dataHexCode,
 		"size_image": imageSize,
 		"coder":      "BASE64",
@@ -280,7 +281,7 @@ func (c *UtopiaClient) JoinChannel(channelID string, password ...string) (bool, 
 	if len(password) > 0 {
 		params["password"] = password[0]
 	}
-	return c.queryResultToBool("joinChannel", params)
+	return c.queryResultToBool(reqJoinChannel, params)
 }
 
 func (c *UtopiaClient) GetChannelContacts(channelID string) ([]structs.ChannelContactData, error) {
@@ -359,7 +360,7 @@ func (c *UtopiaClient) GetChannelInfo(channelID string) (structs.ChannelData, er
 	params := uMap{
 		"channelid": channelID,
 	}
-	response, err := c.apiQuery("getChannelInfo", params)
+	response, err := c.apiQuery(reqGetChannelInfo, params)
 	if err != nil {
 		return structs.ChannelData{}, err
 	}
@@ -398,7 +399,7 @@ func (c *UtopiaClient) GetChannels(task structs.GetChannelsTask) ([]structs.Sear
 		filters["sortBy"] = "description"
 	}
 
-	response, err := c.apiQueryWithFilters("getChannels", params, filters)
+	response, err := c.apiQueryWithFilters(reqGetChannels, params, filters)
 	if err != nil {
 		return nil, err
 	}
