@@ -1,4 +1,4 @@
-package utopiago
+package utopia
 
 import (
 	"bytes"
@@ -16,17 +16,22 @@ import (
 
 // get API url
 func (c *UtopiaClient) getBaseURL() string {
-	return c.Protocol + "://" + c.getBaseURLWithoutProtocol()
+	return c.data.Protocol + "://" + c.getBaseURLWithoutProtocol()
 }
 
 // get API url
 func (c *UtopiaClient) getBaseURLWithoutProtocol() string {
-	return c.Host + ":" + strconv.Itoa(c.Port) + "/api/1.0/"
+	return c.data.Host + ":" + strconv.Itoa(c.data.Port) + "/api/1.0/"
 }
 
 // get ws API url
 func (c *UtopiaClient) getWsURL() string {
-	return "ws://" + c.Host + ":" + strconv.Itoa(c.WsPort) + "/UtopiaWSS?token=" + c.Token
+	return fmt.Sprintf(
+		"ws://%s:%v/UtopiaWSS?token=%s",
+		c.data.Host,
+		c.data.WsPort,
+		c.data.Token,
+	)
 }
 
 func (c *UtopiaClient) apiQuery2JSON(
@@ -47,15 +52,15 @@ func (c *UtopiaClient) apiQuery2JSON(
 	}
 	defer l.handle(c.logCallback)
 
-	var query = Query{
+	var q = query{
 		Method: methodName,
-		Token:  c.Token,
+		Token:  c.data.Token,
 	}
 	if params != nil {
-		query.Params = params
+		q.Params = params
 	}
 
-	var jsonStr, err = json.Marshal(query)
+	var jsonStr, err = json.Marshal(q)
 	if err != nil {
 		return nil, l.useError(fmt.Errorf("failed to decode response json: %w", err))
 	}
@@ -86,7 +91,10 @@ func (c *UtopiaClient) apiQuery2JSON(
 	return body, nil
 }
 
-func (c *UtopiaClient) apiQuery(methodName string, params map[string]interface{}) (map[string]interface{}, error) {
+func (c *UtopiaClient) apiQuery(
+	methodName string,
+	params map[string]interface{},
+) (map[string]interface{}, error) {
 	return c.apiQueryWithFilters(methodName, params, map[string]interface{}{})
 }
 
@@ -97,8 +105,8 @@ func (c *UtopiaClient) apiQueryWithFilters(
 ) (map[string]interface{}, error) {
 	var r map[string]interface{}
 	var timeoutDuration time.Duration
-	if c.RequestTimeoutSeconds > 0 {
-		timeoutDuration = time.Duration(c.RequestTimeoutSeconds) * time.Second
+	if c.data.RequestTimeoutSeconds > 0 {
+		timeoutDuration = time.Duration(c.data.RequestTimeoutSeconds) * time.Second
 	}
 
 	jsonBody, err := c.apiQuery2JSON(methodName, params, filters, timeoutDuration)
@@ -116,29 +124,34 @@ func (c *UtopiaClient) apiQueryWithFilters(
 	return r, nil
 }
 
+func (c *UtopiaClient) retrieveStruct(
+	method string,
+	params uMap,
+	filters uMap,
+	resultPointer interface{},
+) error {
+	response, err := c.apiQueryWithFilters(method, params, filters)
+	if err != nil {
+		return err
+	}
+
+	return convertResult(response, resultPointer)
+}
+
+func (c *UtopiaClient) getSimpleStruct(method string, resultPointer interface{}) error {
+	return c.retrieveStruct(method, uMap{}, uMap{}, resultPointer)
+}
+
 func closeRequest(resp *http.Response) {
 	if resp != nil {
 		resp.Body.Close()
 	}
 }
 
-func (c *UtopiaClient) queryResultToInterfaceArray(methodName string, params map[string]interface{}) ([]interface{}, error) {
-	if !c.CheckClientConnection() {
-		return nil, errors.New("client disconected")
-	}
-	response, err := c.apiQuery(methodName, params)
-	if result, ok := response["result"]; ok {
-		//check type assertion
-		IResult, isConvertable := result.([]interface{})
-		if !isConvertable {
-			return nil, errors.New("failed to get result array")
-		}
-		return IResult, err
-	}
-	return nil, errors.New("accaptable result doesn't exists in client response")
-}
-
-func (c *UtopiaClient) queryResultToStringsArray(methodName string, params map[string]interface{}) ([]string, error) {
+func (c *UtopiaClient) queryResultToStringsArray(
+	methodName string,
+	params map[string]interface{},
+) ([]string, error) {
 	if !c.CheckClientConnection() {
 		return nil, errors.New("client disconected")
 	}
@@ -187,7 +200,10 @@ func (c *UtopiaClient) queryResultToString(methodName string, params map[string]
 	if isErrorFound {
 		errorInfo, isConvertable := errorInfoRaw.(string)
 		if !isConvertable {
-			return "", errors.New("failed to parse error (type `" + reflect.ValueOf(errorInfoRaw).String() + "`) from result")
+			return "", fmt.Errorf(
+				"parse error (type %q) from result",
+				reflect.ValueOf(errorInfoRaw).String(),
+			)
 		}
 		return "", errors.New(errorInfo)
 	}
@@ -195,13 +211,19 @@ func (c *UtopiaClient) queryResultToString(methodName string, params map[string]
 	return "", errors.New("result & error fields doesn't exists in client response")
 }
 
-func (c *UtopiaClient) queryResultToBool(methodName string, params map[string]interface{}) (bool, error) {
+func (c *UtopiaClient) queryResultToBool(
+	methodName string,
+	params map[string]interface{},
+) (bool, error) {
 	resultstr, err := c.queryResultToString(methodName, params)
 	resultBool := tribool.FromString(resultstr).WithMaybeAsTrue()
 	return resultBool, err
 }
 
-func (c *UtopiaClient) queryResultToFloat64(methodName string, params map[string]interface{}) (float64, error) {
+func (c *UtopiaClient) queryResultToFloat64(
+	methodName string,
+	params map[string]interface{},
+) (float64, error) {
 	resultstr, err := c.queryResultToString(methodName, params)
 	if err != nil {
 		return 0, err
@@ -210,7 +232,10 @@ func (c *UtopiaClient) queryResultToFloat64(methodName string, params map[string
 	return resultFloat, err
 }
 
-func (c *UtopiaClient) queryResultToInt(methodName string, params map[string]interface{}) (int64, error) {
+func (c *UtopiaClient) queryResultToInt(
+	methodName string,
+	params map[string]interface{},
+) (int64, error) {
 	resultstr, err := c.queryResultToString(methodName, params)
 	if err != nil {
 		return 0, err
