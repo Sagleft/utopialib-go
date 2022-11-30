@@ -120,6 +120,9 @@ type Client interface {
 
 	// ToogleChannelNotifications - enable or disable channel notifications
 	ToogleChannelNotifications(channelID string, enabled bool) error
+
+	// GetNetworkConnections - get current network peers
+	GetNetworkConnections(channelID string) ([]structs.PeerInfo, error)
 }
 
 type Config = utopia.Config

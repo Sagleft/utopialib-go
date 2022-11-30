@@ -426,13 +426,13 @@ func (c *UtopiaClient) ToogleChannelNotifications(channelID string, enabled bool
 }
 
 // GetNetworkConnections - get current network peers
-func (c *UtopiaClient) GetNetworkConnections(channelID string) ([]PeerInfo, error) {
+func (c *UtopiaClient) GetNetworkConnections(channelID string) ([]structs.PeerInfo, error) {
 	response, err := c.apiQuery("getNetworkConnections", map[string]interface{}{})
 	if err != nil {
 		return nil, err
 	}
 
-	data := []PeerInfo{}
+	data := []structs.PeerInfo{}
 	if err := convertResult(response, &data); err != nil {
 		return nil, err
 	}
