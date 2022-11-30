@@ -426,7 +426,7 @@ func (c *UtopiaClient) ToogleChannelNotifications(channelID string, enabled bool
 }
 
 // GetNetworkConnections - get current network peers
-func (c *UtopiaClient) GetNetworkConnections(channelID string) ([]structs.PeerInfo, error) {
+func (c *UtopiaClient) GetNetworkConnections() ([]structs.PeerInfo, error) {
 	response, err := c.apiQuery("getNetworkConnections", map[string]interface{}{})
 	if err != nil {
 		return nil, err
