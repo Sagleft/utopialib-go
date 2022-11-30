@@ -1,8 +1,6 @@
-package utopia
+package errors
 
-import (
-	"strings"
-)
+import "strings"
 
 var connBrokenErrorInfo = []string{
 	"read: connection reset by peer",
