@@ -432,10 +432,10 @@ func (c *UtopiaClient) GetNetworkConnections() ([]structs.PeerInfo, error) {
 		return nil, err
 	}
 
-	data := []structs.PeerInfo{}
+	data := structs.PeersInfoContainer{}
 	if err := convertResult(response, &data); err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return data.Connections, nil
 }

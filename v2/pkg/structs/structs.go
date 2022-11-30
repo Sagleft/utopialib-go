@@ -110,6 +110,10 @@ type SearchChannelData struct {
 	OwnerPubkey string `json:"owner"`       // 1B742E8D8DAE682ADD2568BE25B23F35BA7A8BFC1D5D3BCA0EE219A754A48201
 }
 
+type PeersInfoContainer struct {
+	Connections []PeerInfo `json:"connections"`
+}
+
 type PeerInfo struct {
 	Direction int    `json:"direction"`
 	Address   string `json:"remoteAddress"`
