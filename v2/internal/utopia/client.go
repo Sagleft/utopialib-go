@@ -20,7 +20,8 @@ func NewUtopiaClient(data Config) *UtopiaClient {
 
 func getRateLimiters() rateLimiters {
 	return rateLimiters{
-		reqDefault: rate.New(defaultRequestsPerSecond, time.Second),
+		reqDefault:            rate.New(defaultRequestsPerSecond, time.Second),
+		reqGetChannelContacts: rate.New(10, time.Second),
 	}
 }
 
@@ -286,7 +287,7 @@ func (c *UtopiaClient) JoinChannel(channelID string, password ...string) (bool, 
 
 func (c *UtopiaClient) GetChannelContacts(channelID string) ([]structs.ChannelContactData, error) {
 	params := uMap{"channelid": channelID}
-	response, err := c.apiQuery("getChannelContacts", params)
+	response, err := c.apiQuery(reqGetChannelContacts, params)
 	if err != nil {
 		return nil, err
 	}

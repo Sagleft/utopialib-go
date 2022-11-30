@@ -32,4 +32,5 @@ const (
 	reqGetStickerNamesByCollection = "getStickerNamesByCollection"
 	reqGetImageSticker             = "getImageSticker"
 	reqUcodeEncode                 = "ucodeEncode"
+	reqGetChannelContacts          = "getChannelContacts"
 )
