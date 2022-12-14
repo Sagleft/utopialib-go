@@ -22,6 +22,7 @@ func getRateLimiters() rateLimiters {
 	return rateLimiters{
 		reqDefault:            rate.New(defaultRequestsPerSecond, time.Second),
 		reqGetChannelContacts: rate.New(10, time.Second),
+		reqJoinChannel:        rate.New(4, time.Second),
 	}
 }
 
