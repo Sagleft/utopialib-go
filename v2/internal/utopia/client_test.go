@@ -34,7 +34,16 @@ func TestGetProfileStatus(t *testing.T) {
 	c.reqHandler = handlerMock
 
 	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).Return(
-		[]byte(`{"result":{}}`), nil,
+		[]byte(`{
+			"result": {
+				"mood": "[snowleo]",
+				"status": "Available",
+				"status_code": 4096
+			},
+			"resultExtraInfo": {
+				"elapsed": "0"
+			}
+		}`), nil,
 	)
 
 	_, err := c.GetProfileStatus()
