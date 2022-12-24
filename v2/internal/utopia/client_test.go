@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	mocks "github.com/Sagleft/utopialib-go/v2/internal/mocks"
@@ -84,4 +85,30 @@ func TestSetProfileStatusError(t *testing.T) {
 
 	// then
 	require.Error(t, c.SetProfileStatus("test", "test"))
+}
+
+func TestGetOwnContact(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).Return(
+		[]byte(`{
+			"result": {
+				"avatarMd5": "8AFDAB98B48A90F7D3B18AFF96F0852C",
+				"hashedPk": "809262B77E2EF657F04C7FA9822426D6",
+				"isFriend": false,
+				"nick": "contact",
+				"pk": "CFF4DB80DCA10BD2317D538FF790A03EDA26274768E5EB04E0FDA51989131F32",
+				"status": 4096
+			},
+			"resultExtraInfo": {
+				"elapsed": "0"
+			}
+		}`), nil,
+	)
+
+	contact, err := c.GetOwnContact()
+	require.NoError(t, err)
+
+	assert.Equal(t, "contact", contact.Nick)
+	assert.Equal(t, 4096, contact.Status)
 }
