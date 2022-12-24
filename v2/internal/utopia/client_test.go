@@ -3,7 +3,10 @@ package utopia
 import (
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+
+	mocks "github.com/Sagleft/utopialib-go/v2/internal/mocks"
 )
 
 func getTestClient() *UtopiaClient {
@@ -25,7 +28,15 @@ func TestLimitRate(t *testing.T) {
 }
 
 func TestGetProfileStatus(t *testing.T) {
+	ctrl := gomock.NewController(t)
 	c := getTestClient()
+	handlerMock := mocks.NewMockRequestHandler(ctrl)
+	c.reqHandler = handlerMock
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).Return(
+		[]byte(`{"result":{}}`), nil,
+	)
+
 	_, err := c.GetProfileStatus()
 	require.NoError(t, err)
 }
