@@ -1,8 +1,13 @@
 package utopia
 
-import "github.com/beefsack/go-rate"
+import (
+	"net/http"
+
+	"github.com/beefsack/go-rate"
+)
 
 type UtopiaClient struct {
+	httpClient  *http.Client
 	data        Config
 	logCallback LogCallback
 	limiters    rateLimiters
@@ -12,13 +17,13 @@ type rateLimiters map[string]*rate.RateLimiter
 
 type Config struct {
 	// required
-	Host   string `json:"host"`
+	Host   string `json:"host"` // default: 127.0.0.1
 	Token  string `json:"token"`
 	Port   int    `json:"port"`
 	WsPort int    `json:"wsport"`
 
 	// optional
-	Protocol              string      `json:"protocol"` // default: 127.0.0.1
+	Protocol              string      `json:"protocol"` // default: http
 	RequestTimeoutSeconds int         `json:"timeout"`
 	Cb                    LogCallback `json:"-"`
 }

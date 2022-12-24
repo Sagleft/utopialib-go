@@ -3,6 +3,7 @@ package utopia
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -12,7 +13,15 @@ import (
 )
 
 func NewUtopiaClient(data Config) *UtopiaClient {
+	var timeoutDuration time.Duration
+	if data.RequestTimeoutSeconds > 0 {
+		timeoutDuration = time.Duration(data.RequestTimeoutSeconds) * time.Second
+	}
+
 	return &UtopiaClient{
+		httpClient: &http.Client{
+			Timeout: timeoutDuration,
+		},
 		data:     data,
 		limiters: getRateLimiters(),
 	}

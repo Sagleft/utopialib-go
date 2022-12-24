@@ -38,7 +38,6 @@ func (c *UtopiaClient) apiQuery2JSON(
 	methodName string,
 	params map[string]interface{},
 	filters map[string]interface{},
-	timeout time.Duration,
 ) ([]byte, error) {
 
 	c.limitRate(methodName)
@@ -73,12 +72,7 @@ func (c *UtopiaClient) apiQuery2JSON(
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
-	if timeout > 0 {
-		client.Timeout = timeout
-	}
-
-	resp, err := client.Do(req)
+	resp, err := c.httpClient.Do(req)
 	defer closeRequest(resp)
 	if err != nil {
 		return nil, l.useError(fmt.Errorf("failed to send request: %w", err))
@@ -106,12 +100,8 @@ func (c *UtopiaClient) apiQueryWithFilters(
 	filters map[string]interface{},
 ) (map[string]interface{}, error) {
 	var r map[string]interface{}
-	var timeoutDuration time.Duration
-	if c.data.RequestTimeoutSeconds > 0 {
-		timeoutDuration = time.Duration(c.data.RequestTimeoutSeconds) * time.Second
-	}
 
-	jsonBody, err := c.apiQuery2JSON(methodName, params, filters, timeoutDuration)
+	jsonBody, err := c.apiQuery2JSON(methodName, params, filters)
 	if err != nil {
 		return r, err
 	}
