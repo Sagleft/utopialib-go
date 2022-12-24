@@ -18,6 +18,10 @@ func NewUtopiaClient(data Config) *UtopiaClient {
 		timeoutDuration = time.Duration(data.RequestTimeoutSeconds) * time.Second
 	}
 
+	if data.Host == "" {
+		data.Host = "http"
+	}
+
 	return &UtopiaClient{
 		httpClient: &http.Client{
 			Timeout: timeoutDuration,
