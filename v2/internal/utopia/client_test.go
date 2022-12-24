@@ -9,7 +9,6 @@ import (
 
 func getTestClient() *UtopiaClient {
 	return NewUtopiaClient(Config{
-		Host:                  "localhost",
 		Port:                  20000,
 		WsPort:                25000,
 		RequestTimeoutSeconds: 1,

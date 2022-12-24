@@ -8,6 +8,7 @@ const (
 	defaultPort                   = 20000
 	defaultWsPort                 = 25000
 	defaultHost                   = "127.0.0.1"
+	defaultProtocol               = "http"
 	defaultTimeLayout             = time.RFC3339
 	defaultRequestsPerSecond      = 5
 

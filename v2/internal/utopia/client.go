@@ -19,7 +19,11 @@ func NewUtopiaClient(data Config) *UtopiaClient {
 	}
 
 	if data.Host == "" {
-		data.Host = "http"
+		data.Host = defaultHost
+	}
+
+	if data.Protocol == "" {
+		data.Protocol = defaultProtocol
 	}
 
 	return &UtopiaClient{
