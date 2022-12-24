@@ -142,3 +142,13 @@ func TestCheckClientConnectionUnsuccess(t *testing.T) {
 
 	require.False(t, c.CheckClientConnection())
 }
+
+func TestUseVoucher(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":{}}`), nil)
+
+	_, err := c.UseVoucher("123-456-789")
+	require.NoError(t, err)
+}
