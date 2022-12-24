@@ -30,11 +30,6 @@ func (l *logData) useError(err error) error {
 	return err
 }
 
-/*func (l *logData) useResponse(response []byte) {
-	l.Response = response
-	l.setElapsedTime()
-}*/
-
 func (l *logData) getMessage() string {
 	status := "success"
 	if l.Error != nil {
