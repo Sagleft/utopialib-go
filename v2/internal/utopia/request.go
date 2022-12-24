@@ -122,7 +122,7 @@ func (c *UtopiaClient) queryResultToStringsArray(
 	params map[string]interface{},
 ) ([]string, error) {
 	if !c.CheckClientConnection() {
-		return nil, errors.New("client disconected")
+		return nil, ErrorClientDisconnected
 	}
 	response, err := c.apiQuery(methodName, params)
 	if result, ok := response["result"]; ok {
@@ -153,9 +153,6 @@ func (c *UtopiaClient) queryResultToStringsArray(
 }
 
 func (c *UtopiaClient) queryResultToString(methodName string, params map[string]interface{}) (string, error) {
-	if !c.CheckClientConnection() {
-		return "", errors.New("client disconected")
-	}
 	response, err := c.apiQuery(methodName, params)
 	if err != nil {
 		return "", errors.New("failed to send API request: " + err.Error())
@@ -185,6 +182,7 @@ func (c *UtopiaClient) queryResultToBool(
 	params map[string]interface{},
 ) (bool, error) {
 	resultstr, err := c.queryResultToString(methodName, params)
+	fmt.Println("result", resultstr)
 	resultBool := tribool.FromString(resultstr).WithMaybeAsTrue()
 	return resultBool, err
 }

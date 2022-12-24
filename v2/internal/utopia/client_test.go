@@ -87,6 +87,18 @@ func TestSetProfileStatusError(t *testing.T) {
 	require.Error(t, c.SetProfileStatus("test", "test"))
 }
 
+func TestSetProfileStatusUnsuccess(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	// when error was given
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		AnyTimes().Return([]byte(`{"result":false}`), nil)
+
+	// then
+	err := c.SetProfileStatus("test", "test")
+	require.ErrorIs(t, err, ErrorSetProfileStatus)
+}
+
 func TestGetOwnContact(t *testing.T) {
 	handlerMock, c := getTestClient(t)
 

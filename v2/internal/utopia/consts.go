@@ -1,6 +1,9 @@
 package utopia
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 const (
 	maxCharactersInPaymentComment = 148
@@ -34,4 +37,9 @@ const (
 	reqGetImageSticker             = "getImageSticker"
 	reqUcodeEncode                 = "ucodeEncode"
 	reqGetChannelContacts          = "getChannelContacts"
+)
+
+var (
+	ErrorSetProfileStatus   = errors.New("failed to set profile status")
+	ErrorClientDisconnected = errors.New("client disconected")
 )

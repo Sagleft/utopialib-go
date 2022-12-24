@@ -73,7 +73,7 @@ func (c *UtopiaClient) SetProfileStatus(status string, mood string) error {
 		return err
 	}
 	if !result {
-		return errors.New("failed to set profile status")
+		return ErrorSetProfileStatus
 	}
 	return nil
 }
