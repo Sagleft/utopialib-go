@@ -124,3 +124,21 @@ func TestGetOwnContact(t *testing.T) {
 	assert.Equal(t, "contact", contact.Nick)
 	assert.Equal(t, 4096, contact.Status)
 }
+
+func TestCheckClientConnectionSuccess(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":{}}`), nil)
+
+	require.True(t, c.CheckClientConnection())
+}
+
+func TestCheckClientConnectionUnsuccess(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(nil, ErrorClientDisconnected)
+
+	require.False(t, c.CheckClientConnection())
+}
