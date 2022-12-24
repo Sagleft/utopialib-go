@@ -3,7 +3,6 @@ package utopia
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -16,8 +15,7 @@ func getTestClient() *UtopiaClient {
 }
 
 func TestNewUtopiaClient(t *testing.T) {
-	c := getTestClient()
-	assert.Equal(t, float64(1), c.httpClient.Timeout.Seconds())
+	getTestClient()
 }
 
 func TestLimitRate(t *testing.T) {

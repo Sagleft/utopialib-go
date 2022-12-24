@@ -1,13 +1,12 @@
 package utopia
 
 import (
-	"net/http"
-
+	"github.com/Sagleft/utopialib-go/v2/internal/reqhandler"
 	"github.com/beefsack/go-rate"
 )
 
 type UtopiaClient struct {
-	httpClient  *http.Client
+	reqHandler  reqhandler.RequestHandler
 	data        Config
 	logCallback LogCallback
 	limiters    rateLimiters

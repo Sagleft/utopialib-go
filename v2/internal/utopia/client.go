@@ -3,10 +3,10 @@ package utopia
 import (
 	"errors"
 	"fmt"
-	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/Sagleft/utopialib-go/v2/internal/reqhandler"
 	"github.com/Sagleft/utopialib-go/v2/pkg/consts"
 	"github.com/Sagleft/utopialib-go/v2/pkg/structs"
 	"github.com/beefsack/go-rate"
@@ -27,11 +27,9 @@ func NewUtopiaClient(data Config) *UtopiaClient {
 	}
 
 	return &UtopiaClient{
-		httpClient: &http.Client{
-			Timeout: timeoutDuration,
-		},
-		data:     data,
-		limiters: getRateLimiters(),
+		reqHandler: reqhandler.NewDefaultHandler(timeoutDuration),
+		data:       data,
+		limiters:   getRateLimiters(),
 	}
 }
 
