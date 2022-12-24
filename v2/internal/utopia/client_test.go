@@ -1,6 +1,7 @@
 package utopia
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -63,11 +64,24 @@ func TestGetSystemInfo(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestSetProfileStatus(t *testing.T) {
+func TestSetProfileStatusNoError(t *testing.T) {
 	handlerMock, c := getTestClient(t)
 
+	// when all is ok
 	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
 		AnyTimes().Return([]byte(`{"result": {}}`), nil)
 
+	// then
 	require.NoError(t, c.SetProfileStatus("test", "test"))
+}
+
+func TestSetProfileStatusError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	// when error was given
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		AnyTimes().Return(nil, errors.New("test error"))
+
+	// then
+	require.Error(t, c.SetProfileStatus("test", "test"))
 }
