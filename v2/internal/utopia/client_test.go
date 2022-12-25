@@ -441,6 +441,36 @@ func TestJoinChannel(t *testing.T) {
 	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return([]byte(`{"result": true}`), nil)
 
-	_, err := c.JoinChannel("")
+	_, err := c.JoinChannel("", "")
 	require.Nil(t, err)
+}
+
+func TestGetChannelContacts(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": []}`), nil)
+
+	_, err := c.GetChannelContacts("")
+	require.Nil(t, err)
+}
+
+func TestGetChannelContactsError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{}`), nil)
+
+	_, err := c.GetChannelContacts("")
+	require.Error(t, err)
+}
+
+func TestGetChannelContactsError2(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`invalid json`), nil)
+
+	_, err := c.GetChannelContacts("")
+	require.Error(t, err)
 }
