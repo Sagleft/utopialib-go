@@ -324,3 +324,13 @@ func TestGetStickerImage(t *testing.T) {
 	_, err := c.GetStickerImage("", "")
 	require.Nil(t, err)
 }
+
+func TestUCodeEncode(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":""}`), nil)
+
+	_, err := c.UCodeEncode("", "", "", 256)
+	require.Nil(t, err)
+}
