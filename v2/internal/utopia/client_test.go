@@ -655,3 +655,21 @@ func TestGetChannelsVariants(t *testing.T) {
 	})
 	require.Nil(t, err)
 }
+
+func TestToogleChannelNotifications(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": true}`), nil)
+
+	require.Nil(t, c.ToogleChannelNotifications("", true))
+}
+
+func TestToogleChannelNotificationsError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{}`), nil)
+
+	require.Error(t, c.ToogleChannelNotifications("", true))
+}
