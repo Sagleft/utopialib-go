@@ -434,3 +434,13 @@ func TestGetContactNotFound(t *testing.T) {
 	_, err := c.GetContact("")
 	require.Error(t, err)
 }
+
+func TestJoinChannel(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": true}`), nil)
+
+	_, err := c.JoinChannel("")
+	require.Nil(t, err)
+}
