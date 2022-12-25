@@ -414,3 +414,23 @@ func TestGetContact(t *testing.T) {
 	_, err := c.GetContact("")
 	require.Nil(t, err)
 }
+
+func TestGetContactError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`invalid json`), nil)
+
+	_, err := c.GetContact("")
+	require.Error(t, err)
+}
+
+func TestGetContactNotFound(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": []}`), nil)
+
+	_, err := c.GetContact("")
+	require.Error(t, err)
+}
