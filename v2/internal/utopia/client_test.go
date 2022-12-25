@@ -492,3 +492,40 @@ func TestRemoveChannelMessage(t *testing.T) {
 
 	require.Nil(t, c.RemoveChannelMessage("", 1000000))
 }
+
+func TestGetChannelMessages(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": [{}]}`), nil)
+
+	_, err := c.GetChannelMessages("", 0, 1)
+	require.Nil(t, err)
+}
+
+func TestGetChannelMessagesNotFound(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": []}`), nil)
+
+	data, err := c.GetChannelMessages("", 0, 1)
+	require.Nil(t, err)
+	assert.Equal(t, 0, len(data))
+}
+
+func TestGetChannelMessagesError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`invalid json`), nil)
+
+	_, err := c.GetChannelMessages("", 0, 1)
+	require.Error(t, err)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{}`), nil)
+
+	_, err = c.GetChannelMessages("", 0, 1)
+	require.Error(t, err)
+}
