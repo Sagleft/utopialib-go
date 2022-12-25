@@ -364,3 +364,13 @@ func TestRejectAuthRequest(t *testing.T) {
 	_, err := c.RejectAuthRequest("", "")
 	require.Nil(t, err)
 }
+
+func TestSendInstantMessage(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":0}`), nil)
+
+	_, err := c.SendInstantMessage("", "")
+	require.Nil(t, err)
+}
