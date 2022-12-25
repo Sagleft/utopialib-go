@@ -304,3 +304,23 @@ func TestSendChannelPicture(t *testing.T) {
 	_, err := c.SendChannelPicture("", "", "", "")
 	require.Nil(t, err)
 }
+
+func TestGetStickerNamesByCollection(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":[]}`), nil)
+
+	_, err := c.GetStickerNamesByCollection("")
+	require.Nil(t, err)
+}
+
+func TestGetStickerImage(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":""}`), nil)
+
+	_, err := c.GetStickerImage("", "")
+	require.Nil(t, err)
+}
