@@ -3,12 +3,14 @@ package utopia
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	mocks "github.com/Sagleft/utopialib-go/v2/internal/mocks"
+	"github.com/Sagleft/utopialib-go/v2/pkg/structs"
 )
 
 func getTestClient(t *testing.T) (*mocks.MockRequestHandler, *UtopiaClient) {
@@ -150,5 +152,35 @@ func TestUseVoucher(t *testing.T) {
 		Return([]byte(`{"result":{}}`), nil)
 
 	_, err := c.UseVoucher("123-456-789")
+	require.NoError(t, err)
+}
+
+func TestGetFinanceInfo(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":{}}`), nil)
+
+	_, err := c.GetFinanceInfo()
+	require.NoError(t, err)
+}
+
+func TestGetFinanceHistory(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":[{},{}]}`), nil)
+
+	data, err := c.GetFinanceHistory(structs.GetFinanceHistoryTask{})
+	require.NoError(t, err)
+	assert.Equal(t, 2, len(data))
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":[]}`), nil)
+
+	_, err = c.GetFinanceHistory(structs.GetFinanceHistoryTask{
+		FromDate: time.Now(),
+		ToDate:   time.Now(),
+	})
 	require.NoError(t, err)
 }
