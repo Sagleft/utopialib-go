@@ -184,3 +184,13 @@ func TestGetFinanceHistory(t *testing.T) {
 	})
 	require.NoError(t, err)
 }
+
+func TestGetBalance(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":0}`), nil)
+
+	_, err := c.GetBalance()
+	require.NoError(t, err)
+}
