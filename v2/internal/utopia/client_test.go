@@ -194,3 +194,33 @@ func TestGetBalance(t *testing.T) {
 	_, err := c.GetBalance()
 	require.NoError(t, err)
 }
+
+func TestGetUUSDBalance(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":0}`), nil)
+
+	_, err := c.GetUUSDBalance()
+	require.NoError(t, err)
+}
+
+func TestCreateVoucher(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":""}`), nil)
+
+	_, err := c.CreateVoucher(100)
+	require.NoError(t, err)
+}
+
+func TestCreateUUSDVoucher(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":""}`), nil)
+
+	_, err := c.CreateUUSDVoucher(100)
+	require.NoError(t, err)
+}
