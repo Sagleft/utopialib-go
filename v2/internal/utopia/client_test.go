@@ -224,3 +224,33 @@ func TestCreateUUSDVoucher(t *testing.T) {
 	_, err := c.CreateUUSDVoucher(100)
 	require.NoError(t, err)
 }
+
+func TestSetWebSocketState(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":"ok"}`), nil)
+
+	require.NoError(t, c.SetWebSocketState(structs.SetWsStateTask{
+		EnableSSL:     true,
+		Notifications: "test",
+	}))
+}
+
+func TestSetWebSocketStateEmptyResult(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":""}`), nil)
+
+	require.Error(t, c.SetWebSocketState(structs.SetWsStateTask{}))
+}
+
+func TestSetWebSocketStateError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{}`), nil)
+
+	require.Error(t, c.SetWebSocketState(structs.SetWsStateTask{}))
+}

@@ -167,7 +167,7 @@ func (c *UtopiaClient) SetWebSocketState(task structs.SetWsStateTask) error {
 		return err
 	}
 	if result == "" {
-		return errors.New("failed to set websocker state")
+		return errors.New("failed to set websocket state: result is empty")
 	}
 	return nil
 }
