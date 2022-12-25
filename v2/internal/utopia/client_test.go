@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	mocks "github.com/Sagleft/utopialib-go/v2/internal/mocks"
+	"github.com/Sagleft/utopialib-go/v2/pkg/consts"
 	"github.com/Sagleft/utopialib-go/v2/pkg/structs"
 )
 
@@ -592,4 +593,65 @@ func TestGetChannelInfoError(t *testing.T) {
 
 	_, err = c.GetChannelInfo("")
 	require.Error(t, err)
+}
+
+func TestGetChannels(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": []}`), nil)
+
+	_, err := c.GetChannels(structs.GetChannelsTask{
+		FromDate: time.Now(),
+		ToDate:   time.Now(),
+	})
+	require.Nil(t, err)
+}
+
+func TestGetChannelsError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{}`), nil)
+
+	_, err := c.GetChannels(structs.GetChannelsTask{})
+	require.Error(t, err)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`invalid json`), nil)
+
+	_, err = c.GetChannels(structs.GetChannelsTask{})
+	require.Error(t, err)
+}
+
+func TestGetChannelsVariants(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		Return([]byte(`{"result": []}`), nil)
+
+	_, err := c.GetChannels(structs.GetChannelsTask{
+		SortBy: consts.SortChannelsByCreated,
+	})
+	require.Nil(t, err)
+
+	_, err = c.GetChannels(structs.GetChannelsTask{
+		SortBy: consts.SortChannelsByIsPrivate,
+	})
+	require.Nil(t, err)
+
+	_, err = c.GetChannels(structs.GetChannelsTask{
+		SortBy: consts.SortChannelsByName,
+	})
+	require.Nil(t, err)
+
+	_, err = c.GetChannels(structs.GetChannelsTask{
+		SortBy: consts.SortChannelsByModified,
+	})
+	require.Nil(t, err)
+
+	_, err = c.GetChannels(structs.GetChannelsTask{
+		SortBy: consts.SortChannelsByDescription,
+	})
+	require.Nil(t, err)
 }
