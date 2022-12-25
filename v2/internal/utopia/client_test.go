@@ -474,3 +474,21 @@ func TestGetChannelContactsError2(t *testing.T) {
 	_, err := c.GetChannelContacts("")
 	require.Error(t, err)
 }
+
+func TestEnableChannelReadOnly(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": true}`), nil)
+
+	require.Nil(t, c.EnableChannelReadOnly("", true))
+}
+
+func TestRemoveChannelMessage(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": ""}`), nil)
+
+	require.Nil(t, c.RemoveChannelMessage("", 1000000))
+}
