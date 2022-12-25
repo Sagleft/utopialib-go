@@ -344,3 +344,13 @@ func TestSendAuthRequest(t *testing.T) {
 	_, err := c.SendAuthRequest("", "")
 	require.Nil(t, err)
 }
+
+func TestAcceptAuthRequest(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":true}`), nil)
+
+	_, err := c.AcceptAuthRequest("", "")
+	require.Nil(t, err)
+}
