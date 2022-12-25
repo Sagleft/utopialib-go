@@ -355,6 +355,14 @@ func (c *UtopiaClient) GetChannelMessages(
 }
 
 func (c *UtopiaClient) SendPayment(task structs.SendPaymentTask) (string, error) {
+	if task.Amount == 0 {
+		return "", errors.New("amount is not set")
+	}
+
+	if task.To == "" {
+		return "", errors.New("destination address (`to`) is not set")
+	}
+
 	if task.Comment != "" && len(task.Comment) > maxCharactersInPaymentComment {
 		return "", fmt.Errorf("comment max length is %v characters", maxCharactersInPaymentComment)
 	}
