@@ -121,9 +121,6 @@ func (c *UtopiaClient) queryResultToStringsArray(
 	methodName string,
 	params map[string]interface{},
 ) ([]string, error) {
-	if !c.CheckClientConnection() {
-		return nil, ErrorClientDisconnected
-	}
 	response, err := c.apiQuery(methodName, params)
 	if result, ok := response["result"]; ok {
 		//check type assertion
