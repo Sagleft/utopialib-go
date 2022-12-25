@@ -374,3 +374,43 @@ func TestSendInstantMessage(t *testing.T) {
 	_, err := c.SendInstantMessage("", "")
 	require.Nil(t, err)
 }
+
+func TestGetContacts(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":[]}`), nil)
+
+	_, err := c.GetContacts("")
+	require.Nil(t, err)
+}
+
+func TestGetContactsError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`invalid json`), nil)
+
+	_, err := c.GetContacts("")
+	require.Error(t, err)
+}
+
+func TestGetContactsError2(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{}`), nil)
+
+	_, err := c.GetContacts("")
+	require.Error(t, err)
+}
+
+func TestGetContact(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": [{}]}`), nil)
+
+	_, err := c.GetContact("")
+	require.Nil(t, err)
+}
