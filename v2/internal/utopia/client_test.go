@@ -264,3 +264,13 @@ func TestGetWebSocketState(t *testing.T) {
 	_, err := c.GetWebSocketState()
 	require.Nil(t, err)
 }
+
+func TestGetWebSocketStateError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{}`), nil)
+
+	_, err := c.GetWebSocketState()
+	require.Error(t, err)
+}
