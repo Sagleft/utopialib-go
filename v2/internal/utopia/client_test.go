@@ -673,3 +673,30 @@ func TestToogleChannelNotificationsError(t *testing.T) {
 
 	require.Error(t, c.ToogleChannelNotifications("", true))
 }
+
+func TestGetNetworkConnections(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": {"connections":[{},{}]}}`), nil)
+
+	peers, err := c.GetNetworkConnections()
+	require.Nil(t, err)
+	assert.Equal(t, 2, len(peers))
+}
+
+func TestGetNetworkConnectionsError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`invalid json`), nil)
+
+	_, err := c.GetNetworkConnections()
+	require.Error(t, err)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{}`), nil)
+
+	_, err = c.GetNetworkConnections()
+	require.Error(t, err)
+}
