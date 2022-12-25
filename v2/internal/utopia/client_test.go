@@ -254,3 +254,13 @@ func TestSetWebSocketStateError(t *testing.T) {
 
 	require.Error(t, c.SetWebSocketState(structs.SetWsStateTask{}))
 }
+
+func TestGetWebSocketState(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":0}`), nil)
+
+	_, err := c.GetWebSocketState()
+	require.Nil(t, err)
+}
