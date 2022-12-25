@@ -334,3 +334,13 @@ func TestUCodeEncode(t *testing.T) {
 	_, err := c.UCodeEncode("", "", "", 256)
 	require.Nil(t, err)
 }
+
+func TestSendAuthRequest(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":true}`), nil)
+
+	_, err := c.SendAuthRequest("", "")
+	require.Nil(t, err)
+}
