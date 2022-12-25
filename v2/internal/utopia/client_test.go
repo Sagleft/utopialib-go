@@ -294,3 +294,13 @@ func TestSendChannelContactMessage(t *testing.T) {
 	_, err := c.SendChannelContactMessage("", "", "")
 	require.Nil(t, err)
 }
+
+func TestSendChannelPicture(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result":""}`), nil)
+
+	_, err := c.SendChannelPicture("", "", "", "")
+	require.Nil(t, err)
+}
