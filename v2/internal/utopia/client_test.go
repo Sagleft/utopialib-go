@@ -567,3 +567,29 @@ func TestSendPayment(t *testing.T) {
 	_, err = c.SendPayment(task)
 	require.Nil(t, err)
 }
+
+func TestGetChannelInfo(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": {}}`), nil)
+
+	_, err := c.GetChannelInfo("")
+	require.Nil(t, err)
+}
+
+func TestGetChannelInfoError(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`{"result": false}`), nil)
+
+	_, err := c.GetChannelInfo("")
+	require.Error(t, err)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return([]byte(`invalid json`), nil)
+
+	_, err = c.GetChannelInfo("")
+	require.Error(t, err)
+}
