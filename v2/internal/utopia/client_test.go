@@ -529,3 +529,41 @@ func TestGetChannelMessagesError(t *testing.T) {
 	_, err = c.GetChannelMessages("", 0, 1)
 	require.Error(t, err)
 }
+
+func TestSendPayment(t *testing.T) {
+	handlerMock, c := getTestClient(t)
+
+	handlerMock.EXPECT().Send(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+		Return([]byte(`{"result": ""}`), nil)
+
+	// when comment is too long
+	_, err := c.SendPayment(structs.SendPaymentTask{
+		To:     "pubkey",
+		Amount: 100,
+		Comment: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
+			"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
+			"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+	})
+	require.Error(t, err)
+
+	// when `amount` is not set
+	task := structs.SendPaymentTask{}
+	// then
+	_, err = c.SendPayment(task)
+	require.Error(t, err)
+
+	// when `to` is not set
+	task = structs.SendPaymentTask{
+		Amount: 100,
+	}
+	_, err = c.SendPayment(task)
+	require.Error(t, err)
+
+	// when everything is ok
+	task = structs.SendPaymentTask{
+		To:     "pubkey",
+		Amount: 100,
+	}
+	_, err = c.SendPayment(task)
+	require.Nil(t, err)
+}
