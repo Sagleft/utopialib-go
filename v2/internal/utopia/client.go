@@ -6,15 +6,30 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/Sagleft/utopialib-go/v2/internal/reqhandler"
 	"github.com/Sagleft/utopialib-go/v2/pkg/consts"
 	"github.com/Sagleft/utopialib-go/v2/pkg/structs"
 	"github.com/beefsack/go-rate"
 )
 
 func NewUtopiaClient(data Config) *UtopiaClient {
+	var timeoutDuration time.Duration
+	if data.RequestTimeoutSeconds > 0 {
+		timeoutDuration = time.Duration(data.RequestTimeoutSeconds) * time.Second
+	}
+
+	if data.Host == "" {
+		data.Host = defaultHost
+	}
+
+	if data.Protocol == "" {
+		data.Protocol = defaultProtocol
+	}
+
 	return &UtopiaClient{
-		data:     data,
-		limiters: getRateLimiters(),
+		reqHandler: reqhandler.NewDefaultHandler(timeoutDuration),
+		data:       data,
+		limiters:   getRateLimiters(),
 	}
 }
 
@@ -58,7 +73,7 @@ func (c *UtopiaClient) SetProfileStatus(status string, mood string) error {
 		return err
 	}
 	if !result {
-		return errors.New("failed to set profile status")
+		return ErrorSetProfileStatus
 	}
 	return nil
 }
@@ -152,7 +167,7 @@ func (c *UtopiaClient) SetWebSocketState(task structs.SetWsStateTask) error {
 		return err
 	}
 	if result == "" {
-		return errors.New("failed to set websocker state")
+		return errors.New("failed to set websocket state: result is empty")
 	}
 	return nil
 }
@@ -340,6 +355,14 @@ func (c *UtopiaClient) GetChannelMessages(
 }
 
 func (c *UtopiaClient) SendPayment(task structs.SendPaymentTask) (string, error) {
+	if task.Amount == 0 {
+		return "", errors.New("amount is not set")
+	}
+
+	if task.To == "" {
+		return "", errors.New("destination address (`to`) is not set")
+	}
+
 	if task.Comment != "" && len(task.Comment) > maxCharactersInPaymentComment {
 		return "", fmt.Errorf("comment max length is %v characters", maxCharactersInPaymentComment)
 	}

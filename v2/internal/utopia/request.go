@@ -1,12 +1,9 @@
 package utopia
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"reflect"
 	"strconv"
 	"time"
@@ -38,7 +35,6 @@ func (c *UtopiaClient) apiQuery2JSON(
 	methodName string,
 	params map[string]interface{},
 	filters map[string]interface{},
-	timeout time.Duration,
 ) ([]byte, error) {
 
 	c.limitRate(methodName)
@@ -62,35 +58,16 @@ func (c *UtopiaClient) apiQuery2JSON(
 		q.Params = params
 	}
 
-	var jsonStr, err = json.Marshal(q)
+	jsonBytes, err := json.Marshal(q)
 	if err != nil {
 		return nil, l.useError(fmt.Errorf("failed to decode response json: %w", err))
 	}
 
-	req, err := http.NewRequest(l.RequestType, l.APIURL, bytes.NewBuffer(jsonStr))
+	response, err := c.reqHandler.Send(l.RequestType, l.APIURL, jsonBytes)
 	if err != nil {
-		return nil, l.useError(fmt.Errorf("failed to create request: %w", err))
+		return nil, l.useError(err)
 	}
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	if timeout > 0 {
-		client.Timeout = timeout
-	}
-
-	resp, err := client.Do(req)
-	defer closeRequest(resp)
-	if err != nil {
-		return nil, l.useError(fmt.Errorf("failed to send request: %w", err))
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, l.useError(fmt.Errorf("failed to read response body: %w", err))
-	}
-
-	//l.useResponse(body)
-	return body, nil
+	return response, nil
 }
 
 func (c *UtopiaClient) apiQuery(
@@ -106,12 +83,8 @@ func (c *UtopiaClient) apiQueryWithFilters(
 	filters map[string]interface{},
 ) (map[string]interface{}, error) {
 	var r map[string]interface{}
-	var timeoutDuration time.Duration
-	if c.data.RequestTimeoutSeconds > 0 {
-		timeoutDuration = time.Duration(c.data.RequestTimeoutSeconds) * time.Second
-	}
 
-	jsonBody, err := c.apiQuery2JSON(methodName, params, filters, timeoutDuration)
+	jsonBody, err := c.apiQuery2JSON(methodName, params, filters)
 	if err != nil {
 		return r, err
 	}
@@ -144,19 +117,10 @@ func (c *UtopiaClient) getSimpleStruct(method string, resultPointer interface{})
 	return c.retrieveStruct(method, uMap{}, uMap{}, resultPointer)
 }
 
-func closeRequest(resp *http.Response) {
-	if resp != nil {
-		resp.Body.Close()
-	}
-}
-
 func (c *UtopiaClient) queryResultToStringsArray(
 	methodName string,
 	params map[string]interface{},
 ) ([]string, error) {
-	if !c.CheckClientConnection() {
-		return nil, errors.New("client disconected")
-	}
 	response, err := c.apiQuery(methodName, params)
 	if result, ok := response["result"]; ok {
 		//check type assertion
@@ -186,9 +150,6 @@ func (c *UtopiaClient) queryResultToStringsArray(
 }
 
 func (c *UtopiaClient) queryResultToString(methodName string, params map[string]interface{}) (string, error) {
-	if !c.CheckClientConnection() {
-		return "", errors.New("client disconected")
-	}
 	response, err := c.apiQuery(methodName, params)
 	if err != nil {
 		return "", errors.New("failed to send API request: " + err.Error())
@@ -218,6 +179,7 @@ func (c *UtopiaClient) queryResultToBool(
 	params map[string]interface{},
 ) (bool, error) {
 	resultstr, err := c.queryResultToString(methodName, params)
+	fmt.Println("result", resultstr)
 	resultBool := tribool.FromString(resultstr).WithMaybeAsTrue()
 	return resultBool, err
 }

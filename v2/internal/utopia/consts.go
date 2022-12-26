@@ -1,6 +1,9 @@
 package utopia
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 const (
 	maxCharactersInPaymentComment = 148
@@ -8,6 +11,7 @@ const (
 	defaultPort                   = 20000
 	defaultWsPort                 = 25000
 	defaultHost                   = "127.0.0.1"
+	defaultProtocol               = "http"
 	defaultTimeLayout             = time.RFC3339
 	defaultRequestsPerSecond      = 5
 
@@ -33,4 +37,9 @@ const (
 	reqGetImageSticker             = "getImageSticker"
 	reqUcodeEncode                 = "ucodeEncode"
 	reqGetChannelContacts          = "getChannelContacts"
+)
+
+var (
+	ErrorSetProfileStatus   = errors.New("failed to set profile status")
+	ErrorClientDisconnected = errors.New("client disconected")
 )
