@@ -10,6 +10,8 @@ var connBrokenErrorInfo = []string{
 	"client disconected",
 	"connection refused",
 	"EOF",
+	"connection was forcibly closed by the remote host",
+	"invalid connection",
 }
 
 // CheckErrorConnBroken - check the text of the request error, determining whether the client must be restarted
