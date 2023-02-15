@@ -10,7 +10,7 @@ import (
 
 // GetChannelMessageFromEvent - get the event data converted to ChannelMessage.
 // actual only for `newPrivateChannelMessage` and `newChannelMessage` events
-func GetChannelMessageFromEvent(ws *websocket.WsEvent) (structs.WsChannelMessage, error) {
+func GetChannelMessageFromEvent(ws websocket.WsEvent) (structs.WsChannelMessage, error) {
 	result := structs.WsChannelMessage{}
 	eventBytes, err := json.Marshal(ws.Data)
 	if err != nil {
@@ -26,7 +26,7 @@ func GetChannelMessageFromEvent(ws *websocket.WsEvent) (structs.WsChannelMessage
 
 // GetInstantMessageFromEvent - get the event data converted to InstantMessage.
 // actual only for `newInstantMessage` event
-func GetInstantMessageFromEvent(ws *websocket.WsEvent) (structs.InstantMessage, error) {
+func GetInstantMessageFromEvent(ws websocket.WsEvent) (structs.InstantMessage, error) {
 	result := structs.InstantMessage{}
 	eventBytes, err := json.Marshal(ws.Data)
 	if err != nil {
