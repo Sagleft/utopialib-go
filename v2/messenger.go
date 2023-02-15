@@ -3,6 +3,7 @@ package utopiago
 import (
 	"github.com/Sagleft/utopialib-go/v2/internal/utopia"
 	"github.com/Sagleft/utopialib-go/v2/pkg/structs"
+	"github.com/Sagleft/utopialib-go/v2/pkg/websocket"
 )
 
 type Client interface {
@@ -48,6 +49,10 @@ type Client interface {
 
 	// SetWebSocketState - set WSS Notification state
 	SetWebSocketState(task structs.SetWsStateTask) error
+
+	// WsSubscribe - connect to websocket & receive messages.
+	// NOTE: it's blocking method
+	WsSubscribe(task websocket.WsSubscribeTask) error
 
 	// SendChannelMessage - send channel message & get message ID
 	SendChannelMessage(channelID, message string) (string, error)
