@@ -1,6 +1,6 @@
 package websocket
 
-// WsEvent - websocket event from Utopia Client
+// WsEvent - websocket event
 type WsEvent struct {
 	Type string                 `json:"type"`
 	Data map[string]interface{} `json:"data"`
