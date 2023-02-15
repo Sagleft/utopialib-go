@@ -128,6 +128,9 @@ type Client interface {
 
 	// GetNetworkConnections - get current network peers
 	GetNetworkConnections() ([]structs.PeerInfo, error)
+
+	// EnableReadOnly - convert chat to channel
+	EnableReadOnly(channelID string, readOnly bool) error
 }
 
 type Config = utopia.Config

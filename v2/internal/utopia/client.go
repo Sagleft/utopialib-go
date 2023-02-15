@@ -463,3 +463,11 @@ func (c *UtopiaClient) GetNetworkConnections() ([]structs.PeerInfo, error) {
 
 	return data.Connections, nil
 }
+
+func (c *UtopiaClient) EnableReadOnly(channelID string, readOnly bool) error {
+	_, err := c.apiQuery("modifyChannel", map[string]interface{}{
+		"channelid": channelID,
+		"read_only": readOnly,
+	})
+	return err
+}
