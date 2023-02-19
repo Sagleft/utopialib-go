@@ -19,6 +19,7 @@ const (
 	reqGetProfileStatus            = "getProfileStatus"
 	reqGetSystemInfo               = "getSystemInfo"
 	reqSetProfileStatus            = "setProfileStatus"
+	reqSetProfiltData              = "setProfileData"
 	reqGetOwnContact               = "getOwnContact"
 	reqUseVoucher                  = "useVoucher"
 	reqGetFinanceSystemInformation = "getFinanceSystemInformation"
@@ -41,5 +42,6 @@ const (
 
 var (
 	ErrorSetProfileStatus   = errors.New("failed to set profile status")
+	ErrorSetProfileData     = errors.New("failed to set profile data")
 	ErrorClientDisconnected = errors.New("client disconected")
 )

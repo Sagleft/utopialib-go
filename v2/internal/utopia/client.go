@@ -78,6 +78,21 @@ func (c *UtopiaClient) SetProfileStatus(status string, mood string) error {
 	return nil
 }
 
+func (c *UtopiaClient) SetProfileData(nick, firstName, lastName string) error {
+	result, err := c.queryResultToBool(reqSetProfiltData, uMap{
+		"nick":      nick,
+		"firstName": firstName,
+		"lastName":  lastName,
+	})
+	if err != nil {
+		return err
+	}
+	if !result {
+		return ErrorSetProfileData
+	}
+	return nil
+}
+
 func (c *UtopiaClient) GetOwnContact() (structs.OwnContactData, error) {
 	r := structs.OwnContactData{}
 	err := c.getSimpleStruct(reqGetOwnContact, &r)
