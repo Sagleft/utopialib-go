@@ -13,6 +13,9 @@ type Client interface {
 	// SetProfileStatus updates data about the status of the current account
 	SetProfileStatus(status string, mood string) error
 
+	// SetProfileData - update account name
+	SetProfileData(nick, firstName, lastName string) error
+
 	// GetOwnContact asks for full details of the current account
 	GetOwnContact() (structs.OwnContactData, error)
 
