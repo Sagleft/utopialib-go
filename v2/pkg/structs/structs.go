@@ -118,3 +118,9 @@ type PeerInfo struct {
 	Direction int    `json:"direction"`
 	Address   string `json:"remoteAddress"`
 }
+
+type ModeratorRights struct {
+	CanBan            bool `json:"ban"`
+	CanDeleteMessages bool `json:"delete"`
+	CanPinMessages    bool `json:"promote"`
+}

@@ -134,6 +134,15 @@ type Client interface {
 
 	// EnableReadOnly - convert chat to channel
 	EnableReadOnly(channelID string, readOnly bool) error
+
+	/*
+		GetChannelModeratorRights - find out if the user has moderator rights
+		in the channel and get the data about them
+	*/
+	GetChannelModeratorRights(
+		channelID, string,
+		moderatorPubkey string,
+	) (structs.ModeratorRights, error)
 }
 
 type Config = utopia.Config

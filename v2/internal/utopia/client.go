@@ -203,7 +203,9 @@ func (c *UtopiaClient) SendChannelMessage(channelID, message string) (string, er
 	return c.queryResultToString(reqSendChannelMessage, params)
 }
 
-func (c *UtopiaClient) SendChannelContactMessage(channelID, contactPubkeyHash, message string) (string, error) {
+func (c *UtopiaClient) SendChannelContactMessage(
+	channelID, contactPubkeyHash, message string,
+) (string, error) {
 	params := uMap{
 		"channelid":       channelID,
 		"contactHashedPk": contactPubkeyHash,
@@ -212,7 +214,9 @@ func (c *UtopiaClient) SendChannelContactMessage(channelID, contactPubkeyHash, m
 	return c.queryResultToString(reqSendPrivateChannelMessage, params)
 }
 
-func (c *UtopiaClient) SendChannelPicture(channelID, base64Image, comment, filenameForImage string) (string, error) {
+func (c *UtopiaClient) SendChannelPicture(
+	channelID, base64Image, comment, filenameForImage string,
+) (string, error) {
 	params := uMap{
 		"channelid":      channelID,
 		"base64_image":   base64Image,
@@ -238,7 +242,10 @@ func (c *UtopiaClient) GetStickerImage(collectionName, stickerName string) (stri
 	return c.queryResultToString(reqGetImageSticker, params)
 }
 
-func (c *UtopiaClient) UCodeEncode(dataHexCode, coder, format string, imageSize int) (string, error) {
+func (c *UtopiaClient) UCodeEncode(
+	dataHexCode, coder, format string,
+	imageSize int,
+) (string, error) {
 	return c.queryResultToString(reqUcodeEncode, uMap{
 		"hex_code":   dataHexCode,
 		"size_image": imageSize,
@@ -316,7 +323,10 @@ func (c *UtopiaClient) JoinChannel(channelID string, password ...string) (bool, 
 	return c.queryResultToBool(reqJoinChannel, params)
 }
 
-func (c *UtopiaClient) GetChannelContacts(channelID string) ([]structs.ChannelContactData, error) {
+func (c *UtopiaClient) GetChannelContacts(channelID string) (
+	[]structs.ChannelContactData,
+	error,
+) {
 	params := uMap{"channelid": channelID}
 	response, err := c.apiQuery(reqGetChannelContacts, params)
 	if err != nil {
@@ -379,7 +389,10 @@ func (c *UtopiaClient) SendPayment(task structs.SendPaymentTask) (string, error)
 	}
 
 	if task.Comment != "" && len(task.Comment) > maxCharactersInPaymentComment {
-		return "", fmt.Errorf("comment max length is %v characters", maxCharactersInPaymentComment)
+		return "", fmt.Errorf(
+			"comment max length is %v characters",
+			maxCharactersInPaymentComment,
+		)
 	}
 
 	if task.CurrencyTag == "" {
@@ -413,7 +426,9 @@ func (c *UtopiaClient) GetChannelInfo(channelID string) (structs.ChannelData, er
 	return data, nil
 }
 
-func (c *UtopiaClient) GetChannels(task structs.GetChannelsTask) ([]structs.SearchChannelData, error) {
+func (c *UtopiaClient) GetChannels(task structs.GetChannelsTask) (
+	[]structs.SearchChannelData, error,
+) {
 	params := uMap{
 		"filter":       task.SearchFilter,
 		"channel_type": task.ChannelType,
@@ -485,4 +500,23 @@ func (c *UtopiaClient) EnableReadOnly(channelID string, readOnly bool) error {
 		"read_only": readOnly,
 	})
 	return err
+}
+
+func (c *UtopiaClient) GetChannelModeratorRights(
+	channelID string,
+	moderatorPubkey string,
+) (structs.ModeratorRights, error) {
+	params := map[string]interface{}{}
+	data := structs.ModeratorRights{}
+
+	response, err := c.apiQuery("getChannelModeratorRight", params)
+	if err != nil {
+		return data, err
+	}
+
+	if err := convertResult(response, &data); err != nil {
+		return data, err
+	}
+
+	return data, nil
 }
