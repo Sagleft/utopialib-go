@@ -56,4 +56,5 @@ var (
 	ErrorSetProfileStatus   = errors.New("failed to set profile status")
 	ErrorSetProfileData     = errors.New("failed to set profile data")
 	ErrorClientDisconnected = errors.New("client disconected")
+	ErrorChannelIDUnset     = errors.New("channel ID must be set")
 )

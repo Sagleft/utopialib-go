@@ -506,8 +506,14 @@ func (c *UtopiaClient) GetChannelModeratorRights(
 	channelID string,
 	moderatorPubkey string,
 ) (structs.ModeratorRights, error) {
-
 	data := structs.ModeratorRights{}
+	if channelID == "" {
+		return data, ErrorChannelIDUnset
+	}
+	if moderatorPubkey == "" {
+		return data, errors.New("moderator pubkey must be set")
+	}
+
 	if err := c.retrieveStruct(reqGetChannelModeratorRight, uMap{
 		"channelid": channelID,
 		"moderator": moderatorPubkey,
