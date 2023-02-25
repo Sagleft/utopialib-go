@@ -481,7 +481,7 @@ func (c *UtopiaClient) ToogleChannelNotifications(channelID string, enabled bool
 
 // GetNetworkConnections - get current network peers
 func (c *UtopiaClient) GetNetworkConnections() ([]structs.PeerInfo, error) {
-	response, err := c.apiQuery(reqGetNetworkConnections, map[string]interface{}{})
+	response, err := c.apiQuery(reqGetNetworkConnections, uMap{})
 	if err != nil {
 		return nil, err
 	}
@@ -495,7 +495,7 @@ func (c *UtopiaClient) GetNetworkConnections() ([]structs.PeerInfo, error) {
 }
 
 func (c *UtopiaClient) EnableReadOnly(channelID string, readOnly bool) error {
-	_, err := c.apiQuery(reqModifyChannel, map[string]interface{}{
+	_, err := c.apiQuery(reqModifyChannel, uMap{
 		"channelid": channelID,
 		"read_only": readOnly,
 	})
