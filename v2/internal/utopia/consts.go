@@ -39,6 +39,17 @@ const (
 	reqUcodeEncode                 = "ucodeEncode"
 	reqGetChannelContacts          = "getChannelContacts"
 	reqGetChannelModeratorRight    = "getChannelModeratorRight"
+	reqModifyChannel               = "modifyChannel"
+	reqGetNetworkConnections       = "getNetworkConnections"
+	reqEnableChannelNotification   = "enableChannelNotification"
+	reqSendPayment                 = "sendPayment"
+	reqGetChannelMessages          = "getChannelMessages"
+	reqRemoveChannelMessage        = "removeChannelMessage"
+	reqGetContacts                 = "getContacts"
+	reqSendInstantMessage          = "sendInstantMessage"
+	reqRejectAuthorizationRequest  = "rejectAuthorizationRequest"
+	reqAcceptAuthorizationRequest  = "acceptAuthorizationRequest"
+	reqSendAuthorizationRequest    = "sendAuthorizationRequest"
 )
 
 var (

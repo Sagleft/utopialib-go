@@ -259,7 +259,7 @@ func (c *UtopiaClient) SendAuthRequest(pubkey, message string) (bool, error) {
 		"pk":      pubkey,
 		"message": message,
 	}
-	return c.queryResultToBool("sendAuthorizationRequest", params)
+	return c.queryResultToBool(reqSendAuthorizationRequest, params)
 }
 
 func (c *UtopiaClient) AcceptAuthRequest(pubkey, message string) (bool, error) {
@@ -267,7 +267,7 @@ func (c *UtopiaClient) AcceptAuthRequest(pubkey, message string) (bool, error) {
 		"pk":      pubkey,
 		"message": message,
 	}
-	return c.queryResultToBool("acceptAuthorizationRequest", params)
+	return c.queryResultToBool(reqAcceptAuthorizationRequest, params)
 }
 
 func (c *UtopiaClient) RejectAuthRequest(pubkey, message string) (bool, error) {
@@ -275,7 +275,7 @@ func (c *UtopiaClient) RejectAuthRequest(pubkey, message string) (bool, error) {
 		"pk":      pubkey,
 		"message": message,
 	}
-	return c.queryResultToBool("rejectAuthorizationRequest", params)
+	return c.queryResultToBool(reqRejectAuthorizationRequest, params)
 }
 
 func (c *UtopiaClient) SendInstantMessage(to string, message string) (int64, error) {
@@ -283,13 +283,13 @@ func (c *UtopiaClient) SendInstantMessage(to string, message string) (int64, err
 		"to":   to,
 		"text": message,
 	}
-	return c.queryResultToInt("sendInstantMessage", params)
+	return c.queryResultToInt(reqSendInstantMessage, params)
 }
 
 func (c *UtopiaClient) GetContacts(filter string) ([]structs.ContactData, error) {
 	// send request
 	params := uMap{}.add("filter", filter)
-	response, err := c.apiQuery("getContacts", params)
+	response, err := c.apiQuery(reqGetContacts, params)
 	if err != nil {
 		return nil, err
 	}
@@ -341,7 +341,7 @@ func (c *UtopiaClient) GetChannelContacts(channelID string) (
 }
 
 func (c *UtopiaClient) EnableChannelReadOnly(channelID string, readOnly bool) error {
-	_, err := c.queryResultToBool("modifyChannel", uMap{
+	_, err := c.queryResultToBool(reqModifyChannel, uMap{
 		"channelid": channelID,
 		"read_only": readOnly,
 	})
@@ -353,7 +353,7 @@ func (c *UtopiaClient) RemoveChannelMessage(channelID string, messageID int64) e
 		"channelid":  channelID,
 		"id_message": messageID,
 	}
-	_, err := c.queryResultToString("removeChannelMessage", params)
+	_, err := c.queryResultToString(reqRemoveChannelMessage, params)
 	return err
 }
 
@@ -367,7 +367,7 @@ func (c *UtopiaClient) GetChannelMessages(
 		"offset": offset,
 		"limit":  maxMessages,
 	}
-	response, err := c.apiQueryWithFilters("getChannelMessages", params, filters)
+	response, err := c.apiQueryWithFilters(reqGetChannelMessages, params, filters)
 	if err != nil {
 		return nil, err
 	}
@@ -406,7 +406,7 @@ func (c *UtopiaClient) SendPayment(task structs.SendPaymentTask) (string, error)
 		"amount":   task.Amount,
 		"currency": task.CurrencyTag,
 	}
-	return c.queryResultToString("sendPayment", params)
+	return c.queryResultToString(reqSendPayment, params)
 }
 
 func (c *UtopiaClient) GetChannelInfo(channelID string) (structs.ChannelData, error) {
@@ -473,7 +473,7 @@ func (c *UtopiaClient) ToogleChannelNotifications(channelID string, enabled bool
 		"enabled":   enabled,
 	}
 
-	if _, err := c.queryResultToBool("enableChannelNotification", params); err != nil {
+	if _, err := c.queryResultToBool(reqEnableChannelNotification, params); err != nil {
 		return err
 	}
 	return nil
@@ -481,7 +481,7 @@ func (c *UtopiaClient) ToogleChannelNotifications(channelID string, enabled bool
 
 // GetNetworkConnections - get current network peers
 func (c *UtopiaClient) GetNetworkConnections() ([]structs.PeerInfo, error) {
-	response, err := c.apiQuery("getNetworkConnections", map[string]interface{}{})
+	response, err := c.apiQuery(reqGetNetworkConnections, map[string]interface{}{})
 	if err != nil {
 		return nil, err
 	}
@@ -495,7 +495,7 @@ func (c *UtopiaClient) GetNetworkConnections() ([]structs.PeerInfo, error) {
 }
 
 func (c *UtopiaClient) EnableReadOnly(channelID string, readOnly bool) error {
-	_, err := c.apiQuery("modifyChannel", map[string]interface{}{
+	_, err := c.apiQuery(reqModifyChannel, map[string]interface{}{
 		"channelid": channelID,
 		"read_only": readOnly,
 	})
