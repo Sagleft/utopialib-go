@@ -38,6 +38,7 @@ const (
 	reqGetImageSticker             = "getImageSticker"
 	reqUcodeEncode                 = "ucodeEncode"
 	reqGetChannelContacts          = "getChannelContacts"
+	reqGetChannelModeratorRight    = "getChannelModeratorRight"
 )
 
 var (

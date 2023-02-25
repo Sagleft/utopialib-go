@@ -506,15 +506,12 @@ func (c *UtopiaClient) GetChannelModeratorRights(
 	channelID string,
 	moderatorPubkey string,
 ) (structs.ModeratorRights, error) {
-	params := map[string]interface{}{}
+
 	data := structs.ModeratorRights{}
-
-	response, err := c.apiQuery("getChannelModeratorRight", params)
-	if err != nil {
-		return data, err
-	}
-
-	if err := convertResult(response, &data); err != nil {
+	if err := c.retrieveStruct(reqGetChannelModeratorRight, uMap{
+		"channelid": channelID,
+		"moderator": moderatorPubkey,
+	}, uMap{}, &data); err != nil {
 		return data, err
 	}
 
