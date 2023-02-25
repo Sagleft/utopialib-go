@@ -140,7 +140,7 @@ type Client interface {
 		in the channel and get the data about them
 	*/
 	GetChannelModeratorRights(
-		channelID, string,
+		channelID string,
 		moderatorPubkey string,
 	) (structs.ModeratorRights, error)
 }
