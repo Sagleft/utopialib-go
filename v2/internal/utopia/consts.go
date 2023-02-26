@@ -50,6 +50,7 @@ const (
 	reqRejectAuthorizationRequest  = "rejectAuthorizationRequest"
 	reqAcceptAuthorizationRequest  = "acceptAuthorizationRequest"
 	reqSendAuthorizationRequest    = "sendAuthorizationRequest"
+	reqGetChannelModerators        = "getChannelModerators"
 )
 
 var (

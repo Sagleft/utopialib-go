@@ -143,6 +143,8 @@ type Client interface {
 		channelID string,
 		moderatorPubkey string,
 	) (structs.ModeratorRights, error)
+
+	GetChannelModerators(channelID string) ([]string, error)
 }
 
 type Config = utopia.Config

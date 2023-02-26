@@ -523,3 +523,18 @@ func (c *UtopiaClient) GetChannelModeratorRights(
 
 	return data, nil
 }
+
+func (c *UtopiaClient) GetChannelModerators(channelID string) ([]string, error) {
+	// send request
+	params := uMap{}.add("channelid", channelID)
+	response, err := c.apiQuery(reqGetChannelModerators, params)
+	if err != nil {
+		return nil, err
+	}
+
+	data := []string{}
+	if err := convertResult(response, &data); err != nil {
+		return nil, err
+	}
+	return data, nil
+}
