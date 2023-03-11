@@ -7,6 +7,7 @@ var connBrokenErrorInfo = []string{
 	"context deadline exceeded",
 	"client disconected",
 	"connection refused",
+	"write: broken pipe",
 	"EOF",
 }
 
