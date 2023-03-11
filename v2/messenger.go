@@ -108,7 +108,7 @@ type Client interface {
 	EnableChannelReadOnly(channelID string, readOnly bool) error
 
 	// RemoveChannelMessage - remove channel message
-	RemoveChannelMessage(channelID string, messageID int64) error
+	RemoveChannelMessage(channelID string, messageID uint64) error
 
 	// GetChannelMessages - get channel messages with filter (offset, max messages count)
 	GetChannelMessages(
