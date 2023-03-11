@@ -179,7 +179,6 @@ func (c *UtopiaClient) queryResultToBool(
 	params map[string]interface{},
 ) (bool, error) {
 	resultstr, err := c.queryResultToString(methodName, params)
-	fmt.Println("result", resultstr)
 	resultBool := tribool.FromString(resultstr).WithMaybeAsTrue()
 	return resultBool, err
 }
