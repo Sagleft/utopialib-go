@@ -10,8 +10,9 @@ import (
 
 // WsSubscribe - connect to websocket & receive messages.
 // NOTE: it's blocking method
-func (c *UtopiaClient) WsSubscribe(task websocket.WsSubscribeTask) error {
-	return websocket.NewWsHandler(c.getWsURL(), task).Connect()
+func (c *UtopiaClient) WsSubscribe(task websocket.WsSubscribeTask) (websocket.Handler, error) {
+	h := websocket.NewWsHandler(c.getWsURL(), task)
+	return h, h.Connect()
 }
 
 // ParseWsChannelMessage - get the event data converted to ChannelMessage.

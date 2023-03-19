@@ -31,6 +31,10 @@ func NewWsHandler(URL string, task WsSubscribeTask) Handler {
 	return h
 }
 
+func (h *wsHandler) Close() error {
+	return h.conn.Close()
+}
+
 func (h *wsHandler) Connect() error {
 	return h.conn.Dial(h.url, "")
 }

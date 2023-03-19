@@ -55,7 +55,7 @@ type Client interface {
 
 	// WsSubscribe - connect to websocket & receive messages.
 	// NOTE: it's blocking method
-	WsSubscribe(task websocket.WsSubscribeTask) error
+	WsSubscribe(task websocket.WsSubscribeTask) (websocket.Handler, error)
 
 	// SendChannelMessage - send channel message & get message ID
 	SendChannelMessage(channelID, message string) (string, error)
