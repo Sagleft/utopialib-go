@@ -1,5 +1,5 @@
 
-![logo](https://github.com/Sagleft/utopialib-go/raw/master/logo.png)
+![logo](logo.png)
 
 Utopia Ecosystem API wrapper written in Golang
 
