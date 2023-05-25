@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/ctengiz/evtwebsocket"
+	"github.com/Sagleft/evtwebsocket"
 )
 
 type wsHandler struct {

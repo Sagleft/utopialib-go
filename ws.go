@@ -5,7 +5,7 @@ import (
 	"errors"
 	"reflect"
 
-	"github.com/ctengiz/evtwebsocket"
+	"github.com/Sagleft/evtwebsocket"
 )
 
 // GetString - get string field from ws event.

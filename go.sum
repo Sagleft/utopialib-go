@@ -1,5 +1,5 @@
-github.com/ctengiz/evtwebsocket v0.0.0-20180717104640-fc3583982591 h1:I+6x3CO8LDrWNe6r6L9y3n3dYXGcKO9BKhJ/dVUYcwc=
-github.com/ctengiz/evtwebsocket v0.0.0-20180717104640-fc3583982591/go.mod h1:lpk0rZYe7Oil/0fxAXpasQr7TGtHLSoFIYvk7QnpNEM=
+github.com/Sagleft/evtwebsocket v1.0.0 h1:De5nktMLflssyrLcBLi9yVJM65sbVUIWItcVjhDeOP4=
+github.com/Sagleft/evtwebsocket v1.0.0/go.mod h1:Tcws35VyLh2cL1MqUXn6/4+w3rlEsMUt2grpUVSHoYw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

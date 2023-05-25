@@ -1,7 +1,7 @@
 package utopiago
 
 import (
-	"github.com/ctengiz/evtwebsocket"
+	"github.com/Sagleft/evtwebsocket"
 )
 
 // Query is a filter for API requests
