@@ -143,7 +143,7 @@ type ChannelData struct {
 	ModifiedOn       string `json:"modified"`         // 2022-09-09T05:47:52.973Z
 	Description      string `json:"description"`
 	GeoTag           string `json:"geotag"`
-	HasgTags         string `json:"hashtags"`
+	HashTags         string `json:"hashtags"`
 	Languages        string `json:"languages"`
 	Owner            string `json:"owner"`
 	ReadOnly         bool   `json:"readonly"`
