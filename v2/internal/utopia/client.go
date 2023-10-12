@@ -152,17 +152,21 @@ func (c *UtopiaClient) GetUUSDBalance() (float64, error) {
 	return c.queryResultToFloat64(reqGetBalance, uMap{"currency": "USD"})
 }
 
-func (c *UtopiaClient) createCoinVoucher(amount float64, coin string) (string, error) {
-	params := uMap{}.set("amount", amount).set("currency", coin)
+func (c *UtopiaClient) createCoinVoucher(
+	amount float64,
+	coin string,
+	count int,
+) (string, error) {
+	params := uMap{}.set("amount", amount).set("currency", coin).set("count", count)
 	return c.queryResultToString(reqCreateVoucher, params)
 }
 
 func (c *UtopiaClient) CreateVoucher(amount float64) (string, error) {
-	return c.createCoinVoucher(amount, "CRP")
+	return c.createCoinVoucher(amount, coinCRP, 1)
 }
 
 func (c *UtopiaClient) CreateUUSDVoucher(amount float64) (string, error) {
-	return c.createCoinVoucher(amount, "UUSD")
+	return c.createCoinVoucher(amount, coinUUSD, 1)
 }
 
 func (c *UtopiaClient) SetWebSocketState(task structs.SetWsStateTask) error {
@@ -537,4 +541,12 @@ func (c *UtopiaClient) GetChannelModerators(channelID string) ([]string, error) 
 		return nil, err
 	}
 	return data, nil
+}
+
+func (c *UtopiaClient) CreateVoucherBatch(amount float64, count int) (string, error) {
+	return c.createCoinVoucher(amount, coinCRP, count)
+}
+
+func (c *UtopiaClient) CreateUUSDVoucherBatch(amount float64, count int) (string, error) {
+	return c.createCoinVoucher(amount, coinUUSD, count)
 }
