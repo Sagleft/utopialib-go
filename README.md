@@ -71,3 +71,9 @@ How can this be used?
 * development of a bot for the channel;
 * utility for working with uNS;
 * experiments to explore web3.0;
+
+## Projects that use this library
+
+Full list: https://github.com/Sagleft/utopialib-go/network/dependents
+
+Other projects can be found here: https://udocs.gitbook.io/utopia-api/utopia-api/examples-of-projects
