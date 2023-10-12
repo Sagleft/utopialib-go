@@ -53,6 +53,11 @@ const (
 	reqGetChannelModerators        = "getChannelModerators"
 )
 
+const (
+	coinCRP  = "CRP"
+	coinUUSD = "UUSD"
+)
+
 var (
 	ErrorSetProfileStatus   = errors.New("failed to set profile status")
 	ErrorSetProfileData     = errors.New("failed to set profile data")

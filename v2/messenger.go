@@ -42,9 +42,11 @@ type Client interface {
 
 	// CreateVoucher requests the creation of a new Crypton voucher. it returns referenceNumber
 	CreateVoucher(amount float64) (string, error)
+	CreateVoucherBatch(amount float64, count int) (string, error)
 
 	// CreateUUSDVoucher requests the creation of a new UUSD voucher. it returns referenceNumber
 	CreateUUSDVoucher(amount float64) (string, error)
+	CreateUUSDVoucherBatch(amount float64, count int) (string, error)
 
 	// GetWebSocketState - returns WSS Notifications state.
 	// 0 - disabled or active listening port number
