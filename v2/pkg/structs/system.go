@@ -12,3 +12,11 @@ type SystemInfo struct {
 	PacketCacheSize        int    `json:"packetCacheSize"`
 	Uptime                 string `json:"uptime"`
 }
+
+type UNSSyncInfo struct {
+	LastRegisteredName  string `json:"last_record_names_registered"`
+	PeersConnectedCount int    `json:"peers_connected"`
+	CurrentState        string `json:"state"`
+	LocalBlocksCount    int    `json:"local_blocks"`
+	TotalBlocksCount    int    `json:"total_blocks"`
+}

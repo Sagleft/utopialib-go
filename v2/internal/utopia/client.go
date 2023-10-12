@@ -550,3 +550,13 @@ func (c *UtopiaClient) CreateVoucherBatch(amount float64, count int) (string, er
 func (c *UtopiaClient) CreateUUSDVoucherBatch(amount float64, count int) (string, error) {
 	return c.createCoinVoucher(amount, coinUUSD, count)
 }
+
+func (c *UtopiaClient) GetSyncProgress() (float64, error) {
+	r := structs.UNSSyncInfo{}
+	if err := c.getSimpleStruct(reqGetSystemInfo, &r); err != nil {
+		return 0, err
+	}
+
+	syncProgress := 100 * float64(r.LocalBlocksCount) / float64(r.TotalBlocksCount)
+	return roundFloat(syncProgress, syncProgressDigits), nil
+}

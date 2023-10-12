@@ -58,6 +58,8 @@ const (
 	coinUUSD = "UUSD"
 )
 
+const syncProgressDigits = 2
+
 var (
 	ErrorSetProfileStatus   = errors.New("failed to set profile status")
 	ErrorSetProfileData     = errors.New("failed to set profile data")
