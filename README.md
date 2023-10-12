@@ -77,3 +77,11 @@ How can this be used?
 Full list: https://github.com/Sagleft/utopialib-go/network/dependents
 
 Other projects can be found here: https://udocs.gitbook.io/utopia-api/utopia-api/examples-of-projects
+
+## generate mocks
+
+just run:
+
+```bash
+make generate-mocks
+```
