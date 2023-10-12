@@ -27,32 +27,40 @@ import (
 )
 ```
 
-Usage
+Usage example
 -----
 
 ```go
-client := utopiago.NewClient("C17BF2E95821A6B545DC9A193CBB750B").
-	SetProtocol("http").SetPort(22000).SetWsPort(25000)
+package main
 
-myContactData, err := client.GetOwnContact()
-if err != nil {
-	log.Fatalln(err)
+import (
+	"fmt"
+	"log"
+
+	utopiago "github.com/Sagleft/utopialib-go/v2"
+)
+
+func main() {
+	client := utopiago.NewUtopiaClient(utopiago.Config{
+		Protocol: "http",
+		Port:     22000,
+		WsPort:   25000,
+	})
+
+	// print own contact data
+	contactData, err := client.GetOwnContact()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(contactData)
+
+	// print sync progress
+	syncProgress, err := client.GetSyncProgress()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println("sync status:", syncProgress, "%")
 }
-
-fmt.Println(myContactData.Pubkey)
-```
-
-or
-
-```go
-client := utopiago.UtopiaClient{
-	Protocol: "http",
-	Token:    "C17BF2E95821A6B545DC9A193CBB750B",
-	Host:     "127.0.0.1",
-	Port:     22791,
-}
-
-fmt.Println(client.CheckClientConnection())
 ```
 
 How can this be used?
