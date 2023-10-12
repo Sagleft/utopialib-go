@@ -1,6 +1,7 @@
 package utopia
 
 import (
+	"math"
 	"reflect"
 )
 
@@ -16,4 +17,9 @@ func (u uMap) add(fieldTag string, value any) uMap {
 func (u uMap) set(fieldTag string, value interface{}) uMap {
 	u[fieldTag] = value
 	return u
+}
+
+func roundFloat(v float64, digits int) float64 {
+	digitsPow := math.Pow10(digits)
+	return math.Round(v*digitsPow) / digitsPow
 }

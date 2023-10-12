@@ -147,6 +147,9 @@ type Client interface {
 	) (structs.ModeratorRights, error)
 
 	GetChannelModerators(channelID string) ([]string, error)
+
+	// GetSyncProgress() - get sync progress percent. example: 98.99
+	GetSyncProgress() (float64, error)
 }
 
 type Config = utopia.Config
