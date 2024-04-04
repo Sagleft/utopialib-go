@@ -205,7 +205,7 @@ func (c *UtopiaClient) queryResultToInt(
 	}
 	result, err := strconv.ParseInt(resultstr, 10, 64)
 	if err != nil {
-		return 0, fmt.Errorf("parse query result: %w", err)
+		return 0, fmt.Errorf("parse query result %q: %w", resultstr, err)
 	}
 	return result, nil
 }
