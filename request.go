@@ -216,7 +216,10 @@ func (c *UtopiaClient) queryResultToInt(methodName string, params map[string]int
 		return 0, err
 	}
 	result, err := strconv.ParseInt(resultstr, 10, 64)
-	return result, err
+	if err != nil {
+		return 0, fmt.Errorf("parse query result: %w", err)
+	}
+	return result, nil
 }
 
 func convertResult(response map[string]interface{}, toInterface interface{}) error {
