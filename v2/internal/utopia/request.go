@@ -210,6 +210,21 @@ func (c *UtopiaClient) queryResultToInt(
 	return result, nil
 }
 
+func (c *UtopiaClient) queryResultToUInt(
+	methodName string,
+	params map[string]interface{},
+) (uint64, error) {
+	resultstr, err := c.queryResultToString(methodName, params)
+	if err != nil {
+		return 0, err
+	}
+	result, err := strconv.ParseUint(resultstr, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("parse query result %q: %w", resultstr, err)
+	}
+	return result, nil
+}
+
 func convertResult(response map[string]interface{}, toInterface interface{}) error {
 	// check result exists
 	result, isResultFound := response["result"]

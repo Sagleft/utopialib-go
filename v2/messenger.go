@@ -90,7 +90,7 @@ type Client interface {
 
 	// SendInstantMessage - send message to contact (PM).
 	// to - pubkey or uNS entry name
-	SendInstantMessage(to string, message string) (int64, error)
+	SendInstantMessage(to string, message string) (uint64, error)
 
 	// GetContacts - get account contacts.
 	// params: filter - contact pubkey or nickname

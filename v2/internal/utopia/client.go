@@ -282,12 +282,12 @@ func (c *UtopiaClient) RejectAuthRequest(pubkey, message string) (bool, error) {
 	return c.queryResultToBool(reqRejectAuthorizationRequest, params)
 }
 
-func (c *UtopiaClient) SendInstantMessage(to string, message string) (int64, error) {
+func (c *UtopiaClient) SendInstantMessage(to string, message string) (uint64, error) {
 	params := uMap{
 		"to":   to,
 		"text": message,
 	}
-	return c.queryResultToInt(reqSendInstantMessage, params)
+	return c.queryResultToUInt(reqSendInstantMessage, params)
 }
 
 func (c *UtopiaClient) GetContacts(filter string) ([]structs.ContactData, error) {
