@@ -16,14 +16,14 @@ type rateLimiters map[string]*rate.RateLimiter
 
 type Config struct {
 	// required
-	Host   string `json:"host" yaml:"host"` // default: 127.0.0.1
-	Token  string `json:"token" yaml:"token"`
-	Port   int    `json:"port" yaml:"port"`
-	WsPort int    `json:"wsport" yaml:"wsport"`
+	Host   string `json:"host" yaml:"host" envconfig:"UTOPIA_HOST" default:"127.0.0.1"`
+	Token  string `json:"token" yaml:"token" envconfig:"UTOPIA_TOKEN"`
+	Port   int    `json:"port" yaml:"port" envconfig:"UTOPIA_PORT" default:"22825"`
+	WsPort int    `json:"wsport" yaml:"wsport" envconfig:"UTOPIA_WS_PORT" default:"25000"`
 
 	// optional
-	Protocol              string      `json:"protocol" yaml:"protocol"` // default: http
-	RequestTimeoutSeconds int         `json:"timeout" yaml:"timeout"`
+	Protocol              string      `json:"protocol" yaml:"protocol" envconfig:"UTOPIA_PROTO" default:"http"`
+	RequestTimeoutSeconds int         `json:"timeout" yaml:"timeout" envconfig:"UTOPIA_CONN_TIMEOUT" default:"5000"`
 	Cb                    LogCallback `json:"-" yaml:"-"`
 }
 
